@@ -27,7 +27,8 @@ jobs:
           VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VERTEX_AI.LOCATION: "us-central1"
           # ÖNEMLİ: Model isminin başına vertex_ai/ eklemelisin
-          CONFIG.MODEL: "vertex_ai/gemini-1.5-flash-001" 
+          config.model: "vertex_ai/gemini-1.5-flash"
+          config.model_turbo: "vertex_ai/gemini-1.5-flash"
           
           # --- Kimlik Doğrulama ---
           # Botun dosyayı bulması için tam yolu veriyoruz
