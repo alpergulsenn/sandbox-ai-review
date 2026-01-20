@@ -2,10 +2,13 @@ name: AI Code Review
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize] # PR açıldığında veya güncellendiğinde tetiklenir
+    types: [opened, reopened, synchronize]
+  issue_comment: # Yorumları (komutları) algılaması için gerekli
+    types: [created]
 
 jobs:
   pr_agent_job:
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }} 
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -19,10 +22,10 @@ jobs:
           CONFIG.MODEL_API: "vertex_ai"
           VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # Secret'tan çekiyoruz
           VERTEX_AI.LOCATION: "us-central1" # API'yi açtığım bölge
-          VERTEX_AI.MODEL: "gemini-1.5-flash-001" # Seçtiğimiz F/P model 
+          VERTEX_AI.MODEL_NAME: "gemini-1.5-flash-001"
           PR_REVIEWER.EXTRA_INSTRUCTIONS: "Lütfen incelemeyi Türkçe yap. Clean Code (SOLID, DRY) prensiplerine göre detaylı eleştiri ver."
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
+          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"          
           
           # --- Kimlik Doğrulama ---
           GOOGLE_APPLICATION_CREDENTIALS_VAR: ${{ secrets.GCP_SA_KEY }} # Faz 1'de eklediğimiz anahtar
