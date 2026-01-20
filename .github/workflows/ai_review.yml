@@ -1,0 +1,26 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize] # PR açıldığında veya güncellendiğinde tetiklenir
+
+jobs:
+  pr_agent_job:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: PR Agent Action
+        uses: Codium-ai/pr-agent@main 
+        env:
+          # --- Temel Konfigürasyon ---
+          CONFIG.MODEL_API: "vertex_ai"
+          VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # Secret'tan çekiyoruz
+          VERTEX_AI.LOCATION: "us-central1" # API'yi açtığım bölge
+          VERTEX_AI.MODEL: "gemini-1.5-flash" # Seçtiğimiz F/P model 
+          
+          # --- Kimlik Doğrulama ---
+          GOOGLE_APPLICATION_CREDENTIALS_VAR: ${{ secrets.GCP_SA_KEY }} # Faz 1'de eklediğimiz anahtar
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub'ın otomatik sağladığı yetki
