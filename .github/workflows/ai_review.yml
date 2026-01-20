@@ -3,30 +3,38 @@ name: AI Code Review
 on:
   pull_request:
     types: [opened, reopened, synchronize]
-  issue_comment: # Yorumları (komutları) algılaması için gerekli
+  issue_comment:
     types: [created]
 
 jobs:
   pr_agent_job:
-    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }} 
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: write
       contents: read
     steps:
+      - name: Create Credentials File
+        # JSON Key içeriğini geçici bir dosyaya yazıyoruz (GCP'nin standart çalışma şekli)
+        run: echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp_key.json
+
       - name: PR Agent Action
-        uses: Codium-ai/pr-agent@main 
+        uses: Codium-ai/pr-agent@main
         env:
-          # --- Temel Konfigürasyon ---
+          # --- Temel Ayarlar ---
           CONFIG.MODEL_API: "vertex_ai"
-          VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # Secret'tan çekiyoruz
-          VERTEX_AI.LOCATION: "us-central1" # API'yi açtığım bölge
-          VERTEX_AI.MODEL_NAME: "gemini-1.5-flash-001"
-          PR_REVIEWER.EXTRA_INSTRUCTIONS: "Lütfen incelemeyi Türkçe yap. Clean Code (SOLID, DRY) prensiplerine göre detaylı eleştiri ver."
-          PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
-          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"          
+          VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VERTEX_AI.LOCATION: "us-central1"
+          # ÖNEMLİ: Model isminin başına vertex_ai/ eklemelisin
+          CONFIG.MODEL: "vertex_ai/gemini-1.5-flash-001" 
           
           # --- Kimlik Doğrulama ---
-          GOOGLE_APPLICATION_CREDENTIALS_VAR: ${{ secrets.GCP_SA_KEY }} # Faz 1'de eklediğimiz anahtar
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub'ın otomatik sağladığı yetki
+          # Botun dosyayı bulması için tam yolu veriyoruz
+          GOOGLE_APPLICATION_CREDENTIALS: "/tmp/gcp_key.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # --- Faz 3: Özelleştirme ---
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: "Lütfen incelemeyi Türkçe yap. Clean Code (SOLID, DRY) prensiplerine göre detaylı eleştiri ver."
+          PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
+          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
