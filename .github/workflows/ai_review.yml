@@ -20,6 +20,9 @@ jobs:
           VERTEX_AI.PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # Secret'tan çekiyoruz
           VERTEX_AI.LOCATION: "us-central1" # API'yi açtığım bölge
           VERTEX_AI.MODEL: "gemini-1.5-flash" # Seçtiğimiz F/P model 
+          PR_REVIEWS.CONFIG.EXTRA_INSTRUCTIONS: "Lütfen incelemeyi Türkçe yap. Clean Code (SOLID, DRY) prensiplerine göre detaylı eleştiri ver."
+          PR_DESC.CONFIG.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
+          PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false" # Çok küçük değişiklikleri bile incelemesi için
           
           # --- Kimlik Doğrulama ---
           GOOGLE_APPLICATION_CREDENTIALS_VAR: ${{ secrets.GCP_SA_KEY }} # Faz 1'de eklediğimiz anahtar
