@@ -22,24 +22,54 @@ jobs:
       # --- ADIM 2: BOTU ÇALIŞTIR ---
       - name: PR Agent Action
         uses: Codium-ai/pr-agent@main
+
         env:
-          # Model Tanımları (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
+          # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
           CONFIG.MODEL_API: "vertex_ai"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
+          CONFIG.MODEL: "vertex_ai/gemini-3-flash-001" # Derin analiz için
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
           
-          
-          # Vertex AI Bağlantı Bilgileri
+          # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
+          # İstenmeyen dosyaları görmezden gel
+          CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
+          PR_REVIEWER.MIN_SEVERITY: "Medium" # Sadece kritik hatalara odaklan
+          PR_REVIEWER.NUM_CODE_SUGGESTIONS: "4" # Öz ve net öneriler
+
+          # --- DYNAMIC LANGUAGE & PERSONA ---
+          PR_REVIEWER.SYSTEM_PROMPT: |
+            You are a Senior Software Architect. 
+            DYNAMIC LANGUAGE RULE: Detect the language used in the PR description or the user's comment. 
+            If the user writes in Turkish, respond in Turkish. If they write in English, respond in English. 
+            Keep technical architecture terms in their original English form (e.g., 'Dependency Injection').
+
+          # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+            1. CLEAN CODE: Evaluate code against SOLID, DRY, and KISS principles.
+            2. SECURITY SCAN: Check for OWASP vulnerabilities and potential CVE-related patterns.
+            3. EXTERNAL STANDARDS: Use the coding patterns from https://www.baeldung.com/java-8-streams as a mandatory reference. 
+               Ensure that any Java Stream usage follows the efficiency and readability rules described on that page.
+            4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices. 
+               Only report issues that affect system stability, performance, or security.
+
+          # --- AUTOMATION & LABELLING (BOYUT VE TÜR) ---
+          PR_REVIEWER.ENABLE_AUTO_LABELLING: "true"
+          PR_REVIEWER.ADAPTIVE_LABELLING: |
+            if pr_stats.lines_changed > 500:
+              add_label("size/XL")
+            elif pr_stats.lines_changed > 150:
+              add_label("size/L")
+            
+            if contains(diff, "Security") or contains(diff, "Auth"):
+              add_label("security-review")
+            
+            if contains(pr_description, "fix") or contains(pr_description, "bug"):
+              add_label("bug-fix")
+
+          # --- CLOUD & AUTH SETTINGS ---
           VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VERTEX_AI_LOCATION: "us-central1"
-          
-          # Kimlik Doğrulama (Dosya yolunu gösteriyoruz)
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          # Faz 3: Özelleştirmeler
-          PR_REVIEWER.EXTRA_INSTRUCTIONS: "Lütfen incelemeyi Türkçe yap. Clean Code (SOLID, DRY) prensiplerine göre detaylı eleştiri ver."
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
           PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
