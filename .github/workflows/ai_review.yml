@@ -7,7 +7,7 @@ on:
     types: [created]
 
 jobs:
-  pr_agent_job:
+  pr_agent_job: 
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
@@ -26,6 +26,7 @@ jobs:
         env:
           # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
           CONFIG.MODEL_API: "vertex_ai"
+          CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.MODEL: "vertex_ai/gemini-2-flash-001" # Derin analiz için
           CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
