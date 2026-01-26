@@ -56,7 +56,7 @@ jobs:
                Only report issues that affect system stability, performance, or security.
 
           # --- AUTOMATION & LABELLING (BOYUT VE TÜR) ---
-          PR_REVIEWER.ENABLE_AUTO_LABELLING: "true" # Bu bir master switch. False olursa adaptive labelling de çalışmaz.
+          PR_REVIEWER.ENABLE_AUTO_LABELLING: true # Bu bir master switch. False olursa adaptive labelling de çalışmaz.
           PR_REVIEWER.ADAPTIVE_LABELLING: |
             if pr_stats.lines_changed <= 50:
               add_label("size/XS")
@@ -69,10 +69,10 @@ jobs:
             else:
               add_label("size/XL")
             
-            if contains(diff, "Security") or contains(diff, "Auth"):
+            if contains(diff.lower(), "security") or contains(diff.lower(), "auth"):
               add_label("security-review")
-            
-            if contains(pr_description, "fix") or contains(pr_description, "bug"):
+
+            if contains(pr_description.lower(), "fix") or contains(pr_description.lower(), "bug"):
               add_label("bug-fix")
 
           # --- CLOUD & AUTH SETTINGS ---
