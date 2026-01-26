@@ -48,9 +48,10 @@ jobs:
 
           # --- PR DESCRIPTION SETTINGS ---
           PR_DESCRIPTION.PUBLISH_LABELS: "true"
-          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
-          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
-          PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
+          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
+          #PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
+          #PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
+          #PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
 
           # ÖNEMLİ: Describe aracına "sadece tip değil, tam analiz yap" talimatı veriyoruz
           PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
