@@ -52,26 +52,29 @@ jobs:
           PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
 
+          # ÖNEMLİ: Describe aracına "sadece tip değil, tam analiz yap" talimatı veriyoruz
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
+
           # --- CUSTOM LABELS ---
-          config.enable_custom_labels: "true"  # Custom label'ları aktifleştir
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir
 
           # --- REVIEWER CONFIGURATION ---
-          pr_reviewer.require_score_review: "false"
-          pr_reviewer.require_tests_review: "false"
-          pr_reviewer.require_estimate_effort_to_review: "true"
-          pr_reviewer.require_can_be_split_review: "false"
-          pr_reviewer.num_code_suggestions: 5
-          pr_reviewer.inline_code_comments: "true"
-          pr_reviewer.persistent_comment: "true" 
+          PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
+          PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
+          PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
+          PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
+          PR_REVIEWER.NUM_CODE_SUGGESTIONS: 5
+          PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
+          PR_REVIEWER.PERSISTENT_COMMENT: "true" 
 
           # --- REVIEW LABELS (Otomatik label'lar) ---
-          pr_reviewer.enable_review_labels_effort: "true"     # review effort [1-5/5] etiketi
-          pr_reviewer.enable_review_labels_security: "true"   # possible security issue etiketi
-          pr_reviewer.enable_auto_approval: "false"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"     # review effort [1-5/5] etiketi
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"   # possible security issue etiketi
+          PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
-          pr_reviewer.minimal_severity: "Medium"
-          pr_reviewer.require_security_review: "true"
+          PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
+          PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
