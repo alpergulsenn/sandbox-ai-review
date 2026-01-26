@@ -45,7 +45,16 @@ jobs:
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
           github_action_config.auto_improve: "false"
-          
+
+          # --- PR DESCRIPTION SETTINGS (Label'lar buradan geliyor) ---
+          pr_description.publish_labels: "true"  # ÖNEMLİ: Label yayınlamayı aktifleştir
+          pr_description.publish_description_as_comment: "true"
+          pr_description.add_original_user_description: "true"
+          pr_description.use_description_markers: "true"
+
+          # --- CUSTOM LABELS ---
+          config.enable_custom_labels: "true"  # Custom label'ları aktifleştir
+
           # --- REVIEWER CONFIGURATION ---
           pr_reviewer.require_score_review: "false"
           pr_reviewer.require_tests_review: "false"
@@ -55,19 +64,14 @@ jobs:
           pr_reviewer.inline_code_comments: "true"
           pr_reviewer.persistent_comment: "true" 
 
-          # --- LABELLING ---
-          pr_reviewer.enable_review_labels_effort: "true"
-          pr_reviewer.enable_review_labels_security: "true"
+          # --- REVIEW LABELS (Otomatik label'lar) ---
+          pr_reviewer.enable_review_labels_effort: "true"     # review effort [1-5/5] etiketi
+          pr_reviewer.enable_review_labels_security: "true"   # possible security issue etiketi
           pr_reviewer.enable_auto_approval: "false"
 
           # --- SEVERITY FILTERING ---
           pr_reviewer.minimal_severity: "Medium"
           pr_reviewer.require_security_review: "true"
-
-          # --- DESCRIPTION SETTINGS ---
-          pr_description.publish_description_as_comment: "true"
-          pr_description.add_original_user_description: "true"
-          pr_description.use_description_markers: "true"
           
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
@@ -89,6 +93,4 @@ jobs:
 
          # --- DEBUG MODE ---
           config.verbosity_level: 2
-          github_action_config.enable_output: "true"
-          PR_AGENT_LOG_LEVEL: DEBUG
-          
+          github_action_config.enable_output: "true"          
