@@ -1,5 +1,13 @@
+# --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
+
+# --- DESCRIBE ARACI İÇİN ÖZEL AYAR ---
+[pr_description]
+# Describe komutu çalıştığında özel etiketleri de analiz etmesini zorunlu kılar
+enable_custom_labels = true 
+# Etiketleri PR açıklamasının içinde de listelemesini sağlar
+publish_labels = true
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
