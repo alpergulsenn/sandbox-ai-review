@@ -15,28 +15,57 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      # --- ADIM 1: JSON ANAHTARINI DOSYAYA YAZ (KRİTİK) ---
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
-      # --- ADIM 2: BOTU ÇALIŞTIR ---
+      # Botu çalıştır ---
       - name: PR Agent Action
         uses: Codium-ai/pr-agent@main
 
         env:
+          # --- GITHUB TOKEN (EN ÖNCE) ---
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          # --- GCP AUTHENTICATION (Direkt secret'tan) ---
+          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VERTEX_AI_LOCATION: "us-central1"
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GCP_SA_KEY }}
+
           # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
-          CONFIG.MODEL_API: "vertex_ai"
-          CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
+          CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
           
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
           CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
-          PR_REVIEWER.MIN_SEVERITY: "Medium" # Sadece kritik hatalara odaklan
-          PR_REVIEWER.NUM_CODE_SUGGESTIONS: "4" # Öz ve net öneriler
 
+          # --- AUTO REVIEW SETTINGS ---
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"
+          
+          # --- REVIEWER CONFIGURATION ---
+          pr_reviewer.require_score_review: "false"
+          pr_reviewer.require_tests_review: "false"
+          pr_reviewer.require_estimate_effort_to_review: "true"
+          pr_reviewer.require_can_be_split_review: "false"
+          pr_reviewer.num_code_suggestions: 5
+          pr_reviewer.inline_code_comments: "true"
+          pr_reviewer.persistent_comment: "true" 
+
+          # --- LABELLING ---
+          pr_reviewer.enable_review_labels_effort: "true"
+          pr_reviewer.enable_review_labels_security: "true"
+          pr_reviewer.enable_auto_approval: "false"
+
+          # --- SEVERITY FILTERING ---
+          pr_reviewer.minimal_severity: "Medium"
+          pr_reviewer.require_security_review: "true"
+
+          # --- DESCRIPTION SETTINGS ---
+          pr_description.publish_description_as_comment: "true"
+          pr_description.add_original_user_description: "true"
+          pr_description.use_description_markers: "true"
+          
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
               You are a Senior Software Architect. 
@@ -55,37 +84,8 @@ jobs:
             4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices. 
                Only report issues that affect system stability, performance, or security.
 
-          # --- AUTOMATION & LABELLING (BOYUT VE TÜR) ---
-          PR_REVIEWER.AUTO_REVIEW: true
-          PR_REVIEWER.LABEL_ON_REVIEW: true
-          PR_REVIEWER.ENABLE_AUTO_LABELLING: true # Bu bir master switch. False olursa adaptive labelling de çalışmaz.
-          PR_REVIEWER.ADAPTIVE_LABELLING: |
-              if pr_stats.lines_changed <= 50:
-                add_label("size/XS")
-
-              if pr_stats.lines_changed > 50 and pr_stats.lines_changed <= 150:
-                add_label("size/S")
-
-              if pr_stats.lines_changed > 150 and pr_stats.lines_changed <= 300:
-                add_label("size/M")
-
-              if pr_stats.lines_changed > 300 and pr_stats.lines_changed <= 700:
-                add_label("size/L")
-
-              if pr_stats.lines_changed > 700:
-                add_label("size/XL")
-                
-              if contains(diff.lower(), "security") or contains(diff.lower(), "auth"):
-                add_label("security-review")
-
-              if contains(pr_description.lower(), "fix") or contains(pr_description.lower(), "bug"):
-              add_label("bug-fix")
+          # --- DEBUG MODE ---
+          config.verbosity_level: 2
+          github_action_config.enable_output: "true"
           PR_AGENT_LOG_LEVEL: DEBUG
-
-          # --- CLOUD & AUTH SETTINGS ---
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_REVIEWER.REQUIRE_SCORE_REVIEW: false
-          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: true
+          
