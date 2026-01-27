@@ -12,6 +12,11 @@ publish_labels = false
 add_custom_labels = true
 publish_custom_labels = true
 
+# --- GENERATE_LABELS ARACI İÇİN AYAR ---
+[pr_code_suggestions]
+# Custom labelları generate_labels ile bas
+enable_custom_labels = true
+
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
