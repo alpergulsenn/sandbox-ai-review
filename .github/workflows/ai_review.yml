@@ -14,16 +14,17 @@ jobs:
       issues: write
       pull-requests: write
       contents: read
+      
     steps:
-      # Botu çalıştır ---
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
       # Kaynak kodu ve .pr_agent.toml'u içeri al
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+     # Botu çalıştır ---
+      - name: Create Credentials File
+        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
       - name: PR Agent Action
         uses: Codium-ai/pr-agent@main
