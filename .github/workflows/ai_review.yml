@@ -26,9 +26,9 @@ jobs:
       - name: Create Credentials File
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
-      - name: PR Agent Action
+       # ADIM 1: Describe + Review (labellar olmadan)
+      - name: PR Agent - Describe & Review
         uses: Codium-ai/pr-agent@main
-
         env:
           # --- GITHUB TOKEN (EN ÖNCE) ---
           GITHUB_TOKEN: ${{ github.token }}
@@ -51,17 +51,14 @@ jobs:
           # --- GITHUB ACTION AUTO SETTINGS ---
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false" # bu adımda labelları oluşturma
 
           # --- PR DESCRIPTION SETTINGS ---
-          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
-          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir (analiz için)
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"  
+          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false"  # Bu adımda BASMA
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false"  # Bu adımda BASMA
           PR_DESCRIPTION.PUBLISH_LABELS: "false"
-          #PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
-          #PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
-          #PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
 
           # --- REVIEWER CONFIGURATION ---
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
@@ -102,3 +99,24 @@ jobs:
          # --- DEBUG MODE ---
           CONFIG.VERBOSITY_LEVEL: "2"
           GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"          
+          
+      # ADIM 2: Generate Labels (sadece bu iş için)
+      - name: PR Agent - Generate Custom Labels
+        uses: Codium-ai/pr-agent@main
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VERTEX_AI_LOCATION: "us-central1"
+          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
+          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
+          CONFIG.FALLBACK_MODELS: "[]"
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
+          
+          # Sadece generate_labels çalıştır
+          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
+          GITHUB_ACTION_CONFIG.AUTO_REVIEW: "false"
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
+          
+          CONFIG.VERBOSITY_LEVEL: "2"
+          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"
