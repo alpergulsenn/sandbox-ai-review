@@ -9,8 +9,8 @@ enable_custom_labels = true
 # Etiket yayınını kapat: etiketleri sadece generate_labels aracı bassın
 publish_labels = false
 # Custom labelları describe ile ekleme/publish etme
-add_custom_labels = false
-publish_custom_labels = false
+add_custom_labels = true
+publish_custom_labels = true
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]

@@ -42,7 +42,7 @@ jobs:
           CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
           CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
           CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
           
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
@@ -54,18 +54,14 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
 
           # --- PR DESCRIPTION SETTINGS ---
-          PR_DESCRIPTION.PUBLISH_LABELS: "false"
           PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir (analiz için)
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"  
+          PR_DESCRIPTION.PUBLISH_LABELS: "false"
           #PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
           #PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
           #PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
-
-          # ÖNEMLİ: Etiket yayını sadece generate_labels tarafından yapılsın
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false"
-
-          # --- CUSTOM LABELS ---
-          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir (analiz için)
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false"  # Describe etiket basmasın; sadece /generate_labels bassın
 
           # --- REVIEWER CONFIGURATION ---
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
@@ -104,7 +100,5 @@ jobs:
                Only report issues that affect system stability, performance, or security.
 
          # --- DEBUG MODE ---
-          config.verbosity_level: 2
-          github_action_config.enable_output: "true"          
-          # Ensure outputs are published (labels/comments)
-          config.publish_output: "true"
+          CONFIG.VERBOSITY_LEVEL: "2"
+          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"          
