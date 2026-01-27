@@ -7,9 +7,8 @@ on:
     types: [created]
 
 jobs:
-  # JOB 1: Describe + Review
-  describe_and_review:
-    if: github.event_name == 'pull_request'
+  pr_agent_job: 
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -23,63 +22,61 @@ jobs:
         with:
           fetch-depth: 0
 
-     # Botu çalıştır ---
+      # Botu çalıştır ---
       - name: Create Credentials File
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
-       # ADIM 1: Describe + Review (labellar olmadan)
+      # ADIM 1: Describe + Review
       - name: PR Agent - Describe & Review
         uses: Codium-ai/pr-agent@main
         env:
-          # --- GITHUB TOKEN (EN ÖNCE) ---
           GITHUB_TOKEN: ${{ github.token }}
           
-          # --- GCP AUTHENTICATION (Direkt secret'tan) ---
+          # GCP AUTH
           VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
-          # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
+          # MODEL CONFIG
+          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
           
-          # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
-          # İstenmeyen dosyaları görmezden gel
+          # FILTERING
           CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
 
-          # --- GITHUB ACTION AUTO SETTINGS ---
+          # AUTO SETTINGS - Sadece describe ve review
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false" # bu adımda labelları oluşturma
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
 
-          # --- PR DESCRIPTION SETTINGS ---
+          # PR DESCRIPTION - Label basma
           PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
           PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false"  # Bu adımda BASMA
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false"  # Bu adımda BASMA
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false"
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false"
           PR_DESCRIPTION.PUBLISH_LABELS: "false"
 
-          # --- REVIEWER CONFIGURATION ---
+          # REVIEWER CONFIG
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
           PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
           PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
           PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
           PR_REVIEWER.NUM_CODE_SUGGESTIONS: 5
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
-          PR_REVIEWER.PERSISTENT_COMMENT: "true" 
+          PR_REVIEWER.PERSISTENT_COMMENT: "true"
 
-          # --- REVIEW LABELS (Otomatik label'lar) ---
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"     # review effort [1-5/5] etiketi
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"   # possible security issue etiketi
+          # REVIEW LABELS
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"
           PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
-          # --- SEVERITY FILTERING ---
+          # SEVERITY
           PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
-          # --- DYNAMIC LANGUAGE & PERSONA ---
+          # LANGUAGE & PERSONA
           PR_REVIEWER.SYSTEM_PROMPT: |
               You are a Senior Software Architect. 
               DYNAMIC LANGUAGE RULE:
@@ -88,7 +85,7 @@ jobs:
               - If the user writes in English, respond in English.
               - Keep technical architecture terms in English (e.g., Dependency Injection, Single Responsibility Principle).
 
-          # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
+          # REVIEW INSTRUCTIONS
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
             1. CLEAN CODE: Evaluate code against SOLID, DRY, and KISS principles.
             2. SECURITY SCAN: Check for OWASP vulnerabilities and potential CVE-related patterns.
@@ -97,70 +94,23 @@ jobs:
             4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices. 
                Only report issues that affect system stability, performance, or security.
 
-         # --- DEBUG MODE ---
+          # DEBUG
           CONFIG.VERBOSITY_LEVEL: "2"
-          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"          
+          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"
 
-       # JOB 2: Generate Labels (describe bitince çalış)
-  generate_labels:
-    needs: describe_and_review
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-      contents: write
-      
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
-      - name: PR Agent - Generate Labels ONLY
-        uses: Codium-ai/pr-agent@main
-        with:
-          command: '/generate_labels'  # ÖNEMLİ: Direkt komutu belirt
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
-           
-        
-        # JOB 3: Manuel komutlar için (issue_comment)
-  handle_commands:
-    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-      contents: write
-      
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
-      - name: PR Agent - Handle Commands
-        uses: Codium-ai/pr-agent@main
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
+      # ADIM 2: Otomatik /generate_labels komutunu gönder
+      - name: Trigger Generate Labels Command
+        if: github.event_name == 'pull_request'  # Sadece PR açılışında çalış
+        run: |
+          # PR numarasını al
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          REPO=${{ github.repository }}
+          
+          # GitHub API ile comment gönder
+          curl -X POST \
+            -H "Authorization: token ${{ github.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments \
+            -d '{"body":"/generate_labels"}'
+          
+          echo "✅ /generate_labels komutu PR #$PR_NUMBER'a gönderildi"
