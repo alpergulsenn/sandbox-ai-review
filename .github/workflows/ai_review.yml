@@ -58,6 +58,7 @@ jobs:
 
           # --- CUSTOM LABELS ---
           PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"  # Custom label'ları otomatik olarak ekle
 
           # --- REVIEWER CONFIGURATION ---
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
