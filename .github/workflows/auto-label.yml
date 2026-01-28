@@ -20,19 +20,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
-          npm init -y
           npm install js-yaml @actions/github
-          
-      - name: Install label engine dependencies
-        run: |
-          cd .github/label-engine
-          npm install @actions/core @actions/github   
 
       - name: Auto Label PR
-        run: node .github/label-engine/index.cjs
+        run: node .github/label-engine/index.mjs
         env:
-          PROVIDER: github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
