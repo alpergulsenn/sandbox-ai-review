@@ -1,6 +1,7 @@
-const core = require("@actions/core");
-const github = require("@actions/github");
-const yaml = require("js-yaml");
+const octokit = getOctokit(token);
+
+const { owner, repo } = context.repo;
+const prNumber = context.payload.pull_request.number;const yaml = require("js-yaml");
 
 function getStats(files) {
   let additions = 0;
@@ -33,7 +34,7 @@ async function getPullRequestData() {
 
   return {
     diff,
-    pr_description: github.context.payload.pull_request.body || "",
+    pr_description: context.payload.pull_request.body || "",
     pr_stats: getStats(files.data),
     context: github.context,
     octokit,
@@ -48,22 +49,23 @@ function evaluateRules(prData, rulesYaml) {
 
   const { pr_stats, diff, pr_description } = prData;
 
-  function add_label(label) {
-    labels.push(label);
+  const ctx = { pr_stats, diff, pr_description };
+
+  for (const group of Object.values(rules)) {
+    for (const [label, condition] of Object.entries(group)) {
+      try {
+        if (eval(condition)) {
+          labels.push(label);
+        }
+      } catch (e) {
+        console.warn(`⚠️ Rule failed for ${label}:`, condition);
+      }
+    }
   }
-
-  function contains(text, keyword) {
-    return text.includes(keyword);
-  }
-
-  // 🔥 RULES EXECUTION
-
-  eval(`
-    ${rules}
-  `);
 
   return [...new Set(labels)];
 }
+
 
 async function applyLabels(prData, labels) {
   if (!labels || labels.length === 0) {
