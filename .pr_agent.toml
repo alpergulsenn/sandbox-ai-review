@@ -1,22 +1,16 @@
 # --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
-publish_output = true                # YENİ: Output'ları yayınla (debug için)
-
 
 # --- DESCRIBE ARACI İÇİN ÖZEL AYAR ---
 [pr_description]
 # Describe komutu çalıştığında özel etiketleri de analiz etmesini zorunlu kılar
 enable_custom_labels = true 
-# Etiket yayınını kapat: etiketleri sadece generate_labels aracı bassın
-publish_labels = false 
-# Custom labelları describe ile ekleme/publish etme
+# Etiketleri PR açıklamasının içinde de listelemesini sağlar
+publish_labels = true
+# Custom labelları otomatik eklemek için
 add_custom_labels = true
 publish_custom_labels = true
-
-# --- GENERATE_LABELS ARACI İÇİN AYAR ---  # YENİ BÖLÜM
-[pr_code_suggestions]
-enable_custom_labels = true           # YENİ: Generate_labels custom labelları kullansın
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]

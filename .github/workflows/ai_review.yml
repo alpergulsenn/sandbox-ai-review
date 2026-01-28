@@ -7,27 +7,18 @@ on:
     types: [created]
 
 jobs:
-  pr_review_and_labels:
-    if: github.event_name == 'pull_request'
+  pr_agent_job: 
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: write
-      contents: write
-      
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
+      # Botu çalıştır ---
       - name: Create Credentials File
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
-<<<<<<< HEAD
-      # STEP 1: Describe + Review
-      - name: PR Agent - Describe & Review
-=======
       # Kaynak kodu ve .pr_agent.toml'u içeri al
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,34 +26,65 @@ jobs:
           fetch-depth: 0
 
       - name: PR Agent Action
->>>>>>> ad85418 (custom label update)
         uses: Codium-ai/pr-agent@main
+
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          # --- GITHUB TOKEN (EN ÖNCE) ---
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          # --- GCP AUTHENTICATION (Direkt secret'tan) ---
           VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
+
+          # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
+          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
           CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
-          CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
           
+          # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
+          # İstenmeyen dosyaları görmezden gel
+          CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
+
+          # --- GITHUB ACTION AUTO SETTINGS ---
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
-          
-          PR_DESCRIPTION.PUBLISH_LABELS: "false"
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
+
+          # --- PR DESCRIPTION SETTINGS ---
+          PR_DESCRIPTION.PUBLISH_LABELS: "true"
+          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
+          #PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: "true"
+          #PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
+          #PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
+
+          # ÖNEMLİ: Describe aracına "sadece tip değil, tam analiz yap" talimatı veriyoruz
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
+
+          # --- CUSTOM LABELS ---
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"  # Custom label'ları otomatik olarak ekle
+
+          # --- REVIEWER CONFIGURATION ---
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
           PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
           PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
+          PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
           PR_REVIEWER.NUM_CODE_SUGGESTIONS: 5
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"
+          PR_REVIEWER.PERSISTENT_COMMENT: "true" 
+
+          # --- REVIEW LABELS (Otomatik label'lar) ---
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"     # review effort [1-5/5] etiketi
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"   # possible security issue etiketi
+          PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
+
+          # --- SEVERITY FILTERING ---
           PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
-          CONFIG.VERBOSITY_LEVEL: "2"
+          PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
+          # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
               You are a Senior Software Architect. 
               DYNAMIC LANGUAGE RULE:
@@ -70,90 +92,16 @@ jobs:
               - If the user writes in Turkish, respond in Turkish.
               - If the user writes in English, respond in English.
               - Keep technical architecture terms in English (e.g., Dependency Injection, Single Responsibility Principle).
-          
+
+          # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
             1. CLEAN CODE: Evaluate code against SOLID, DRY, and KISS principles.
             2. SECURITY SCAN: Check for OWASP vulnerabilities and potential CVE-related patterns.
-            3. EXTERNAL STANDARDS: Use the coding patterns from https://www.baeldung.com/java-8-streams as a mandatory reference.
-            4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices.
+            3. EXTERNAL STANDARDS: Use the coding patterns from https://www.baeldung.com/java-8-streams as a mandatory reference. 
+               Ensure that any Java Stream usage follows the efficiency and readability rules described on that page.
+            4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices. 
+               Only report issues that affect system stability, performance, or security.
 
-      # STEP 2: Wait
-      - name: Wait for PR Description
-        run: |
-          echo "⏳ Waiting 15 seconds for PR description to be fully updated..."
-          sleep 15
-
-      # STEP 3: Generate Labels - TÜM YÖNTEMLERI DENE
-      - name: PR Agent - Generate Labels (Method 1 - PR_COMMAND)
-        continue-on-error: true
-        uses: Codium-ai/pr-agent@main
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
-          
-          # YÖNTEM 1: PR_COMMAND env variable
-          PR_COMMAND: '/generate_labels'
-          CONFIG.VERBOSITY_LEVEL: "2"
-          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"
-
-      # Eğer Method 1 başarısız olursa, Method 2'yi dene
-      - name: PR Agent - Generate Labels (Method 2 - AUTO_GENERATE_LABELS)
-        if: failure()
-        uses: Codium-ai/pr-agent@main
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
-          
-          # YÖNTEM 2: AUTO_GENERATE_LABELS
-          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
-          GITHUB_ACTION_CONFIG.AUTO_REVIEW: "false"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
-          CONFIG.VERBOSITY_LEVEL: "2"
-          GITHUB_ACTION_CONFIG.ENABLE_OUTPUT: "true"
-
-  # Manuel komutlar için
-  handle_manual_commands:
-    if: |
-      github.event_name == 'issue_comment' && 
-      github.event.issue.pull_request && 
-      contains(github.event.comment.body, '/') &&
-      github.event.comment.user.type != 'Bot'
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-      contents: write
-      
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
-      - name: PR Agent - Handle Command
-        uses: Codium-ai/pr-agent@main
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          VERTEX_AI_LOCATION: "us-central1"
-          GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001"
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "4096"
-          CONFIG.VERBOSITY_LEVEL: "2"
+         # --- DEBUG MODE ---
+          config.verbosity_level: 2
+          github_action_config.enable_output: "true"          
