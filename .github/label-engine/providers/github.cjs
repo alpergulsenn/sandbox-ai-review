@@ -65,10 +65,13 @@ function evaluateRules(prData, rulesYaml) {
   return [...new Set(labels)];
 }
 
-async function applyLabels(labels) {
-  if (labels.length === 0) return;
+async function applyLabels(prData, labels) {
+  if (!labels || labels.length === 0) {
+    console.log("ℹ️ No labels to apply");
+    return;
+  }
 
-  const { owner, repo, prNumber, octokit } = globalThis.prData || {};
+  const { owner, repo, prNumber, octokit } = prData;
 
   console.log("🏷 Applying labels:", labels);
 
@@ -76,13 +79,14 @@ async function applyLabels(labels) {
     owner,
     repo,
     issue_number: prNumber,
-    labels
+    labels,
   });
 }
+
 
 module.exports = {
   getPullRequestData,
   evaluateRules,
-  applyLabels
+  applyLabels,
 };
 
