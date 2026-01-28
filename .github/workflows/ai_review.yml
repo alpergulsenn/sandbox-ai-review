@@ -15,24 +15,22 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      # Botu çalıştır ---
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
-
       # Kaynak kodu ve .pr_agent.toml'u içeri al
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Botu çalıştır ---
+      - name: Create Credentials File
+        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
+
       - name: PR Agent Action
         uses: Codium-ai/pr-agent@main
 
         env:
-          # --- GITHUB TOKEN (EN ÖNCE) ---
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          # --- GCP AUTHENTICATION (Direkt secret'tan) ---
+          # --- GCP VERTEX AI AUTH ---
+          GITHUB_TOKEN: ${{ github.token }}
           VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
