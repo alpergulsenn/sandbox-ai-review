@@ -3,7 +3,7 @@
 enable_pr_agent = true
 
 # --- DESCRIBE ARACI İÇİN ÖZEL AYAR ---
-[pr_reviewer]
+[pr_description]
 # Describe komutu çalıştığında özel etiketleri de analiz etmesini zorunlu kılar
 enable_custom_labels = true 
 add_custom_labels = true
