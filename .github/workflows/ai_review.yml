@@ -51,12 +51,16 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
 
           # --- PR DESCRIPTION SETTINGS ---
-          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
-          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "true"  # Custom label'ları aktifleştir
           PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true"
+          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true" # ÖNEMLİ: Doğru değişken ismi budur
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false"  
           PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"
           PR_DESCRIPTION.PUBLISH_LABELS: "true"
 
+          # --- LABELER TOOL SETTINGS (Burası Eksik) ---
+          PR_LABELER.ENABLE_CUSTOM_LABELS: "true"  # /generate_labels komutu için özel etiketleri açar
+          PR_LABELER.PUBLISH_LABELS: "true"        # Etiketlerin GitHub'a basılmasını sağlar
+          
           PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"          
 
