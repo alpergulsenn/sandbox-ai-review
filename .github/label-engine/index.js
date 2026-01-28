@@ -1,6 +1,6 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
-const { getPRContext, applyLabels } = require("./github");
+import fs from "fs";
+import yaml from "js-yaml";
+import { getPRContext, applyLabels } from "./github.js";
 
 function loadRules() {
   return yaml.load(
@@ -32,11 +32,9 @@ async function main() {
   const context = await getPRContext();
   const labels = new Set();
 
-  // SIZE
   const sizeLabel = computeSizeLabel(config, context.linesChanged);
   if (sizeLabel) labels.add(sizeLabel);
 
-  // RULES
   for (const rule of config.rules) {
     if (rule.match) {
       const text = collectText(rule, context);
