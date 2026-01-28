@@ -1,13 +1,32 @@
 import fs from "fs";
 import path from "path";
-import githubProvider from "./providers/github.mjs";
+import { fileURLToPath } from "url";
 
-console.log("🔍 Label engine started");
-console.log("📦 Provider: github");
+// __dirname ESM karşılığı
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const rulesPath = path.resolve(".github/label-engine/label-rules.yml");
-const rules = fs.readFileSync(rulesPath, "utf8");
+const provider = process.env.PROVIDER || "github";
 
-const prData = await githubProvider.getPullRequestData();
-const labels = githubProvider.evaluateRules(prData, rules);
-await githubProvider.applyLabels(prData, labels);
+async function run() {
+  console.log("🔍 Label engine started");
+  console.log("📦 Provider:", provider);
+
+  // ✅ ESM uyumlu provider import
+  const providerModule = await import(`./providers/${provider}.mjs`);
+
+  const rulesPath = path.join(__dirname, "label-rules.yml");
+  const rules = fs.readFileSync(rulesPath, "utf8");
+
+  const prData = await providerModule.getPullRequestData();
+  const labels = providerModule.evaluateRules(prData, rules);
+
+  await providerModule.applyLabels(prData, labels);
+}
+
+run().catch(err => {
+  console.error("❌ Label engine failed");
+  console.error(err);
+  process.exit(1);
+});
+
