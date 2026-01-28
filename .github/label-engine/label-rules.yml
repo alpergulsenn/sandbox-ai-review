@@ -1,28 +1,17 @@
 size:
-  prefix: "size/"
-  thresholds:
-    XS: 50
-    S: 150
-    M: 300
-    L: 700
+  XS: 50
+  S: 150
+  M: 300
+  L: 700
 
-rules:
-  - label: "documentation"
-    match: ["\\.md$", "readme"]
-    sources: ["filenames"]
-
-  - label: "database"
-    match: ["\\.sql$", "migration", "schema"]
-    sources: ["filenames"]
-
-  - label: "security-review"
-    match: ["password", "token", "secret", "auth", "encrypt"]
-    sources: ["diff", "title", "description"]
-
-  - label: "performance"
-    match: ["cache", "optimize", "performance"]
-    sources: ["title", "description"]
-
-  - label: "tests"
-    match: ["test", "spec"]
-    sources: ["filenames"]
+keywords:
+  bug-fix:
+    - fix
+    - bug
+  security-review:
+    - security
+    - auth
+    - token
+  feature:
+    - feature
+    - add
