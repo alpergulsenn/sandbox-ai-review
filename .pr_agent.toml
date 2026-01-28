@@ -6,11 +6,11 @@ enable_custom_labels = true
 [pr_description]
 # Describe komutu çalıştığında özel etiketleri de analiz etmesini zorunlu kılar
 enable_custom_labels = true 
-# Etiketleri PR açıklamasının içinde de listelemesini sağlar
-publish_labels = true
-# Custom labelları otomatik eklemek için
 add_custom_labels = true
 publish_custom_labels = true
+# Etiketleri PR açıklamasının içinde de listelemesini sağlar
+publish_labels = false
+# Custom labelları otomatik eklemek için
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
