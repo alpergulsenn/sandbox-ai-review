@@ -1,7 +1,5 @@
-const octokit = getOctokit(token);
-
-const { owner, repo } = context.repo;
-const prNumber = context.payload.pull_request.number;const yaml = require("js-yaml");
+const { context, getOctokit } = require("@actions/github/lib/github");
+const yaml = require("js-yaml");
 
 function getStats(files) {
   let additions = 0;
@@ -21,9 +19,9 @@ async function getPullRequestData() {
   const token = process.env.GITHUB_TOKEN;
   const octokit = github.getOctokit(token);
 
-  const { owner, repo } = github.context.repo;
-  const prNumber = github.context.payload.pull_request.number;
-
+  const { owner, repo } = context.repo;
+  const prNumber = context.payload.pull_request.number;
+  
   const files = await octokit.rest.pulls.listFiles({
     owner,
     repo,
