@@ -24,6 +24,11 @@ jobs:
         run: |
           npm init -y
           npm install js-yaml @actions/github
+          
+      - name: Install label engine dependencies
+        run: |
+          cd .github/label-engine
+          npm install @actions/core @actions/github   
 
       - name: Auto Label PR
         run: node .github/label-engine/index.cjs
