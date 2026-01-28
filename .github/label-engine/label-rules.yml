@@ -8,10 +8,10 @@ keywords:
   bug-fix:
     - fix
     - bug
+  feature:
+    - feature
+    - add
   security-review:
     - security
     - auth
     - token
-  feature:
-    - feature
-    - add

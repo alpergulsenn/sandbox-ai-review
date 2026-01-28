@@ -45,18 +45,19 @@ function evaluateRules(prData, rulesYaml) {
   const { pr_stats, diff, pr_description } = prData;
   const text = `${diff}\n${pr_description}`.toLowerCase();
 
-  // --- SIZE LABEL ---
-  const sizeRules = rules.size;
+  // SIZE LABEL
   const lines = pr_stats.lines_changed;
+  const size = rules.size;
 
-  if (lines <= sizeRules.XS) labels.push("size/XS");
-  else if (lines <= sizeRules.S) labels.push("size/S");
-  else if (lines <= sizeRules.M) labels.push("size/M");
-  else if (lines <= sizeRules.L) labels.push("size/L");
+  if (lines <= size.XS) labels.push("size/XS");
+  else if (lines <= size.S) labels.push("size/S");
+  else if (lines <= size.M) labels.push("size/M");
+  else if (lines <= size.L) labels.push("size/L");
   else labels.push("size/XL");
 
-  // --- KEYWORD LABELS ---
-  for (const [label, keywords] of Object.entries(rules.keywords)) {
+  // KEYWORD LABELS
+  for (const label of Object.keys(rules.keywords)) {
+    const keywords = rules.keywords[label];
     if (keywords.some(k => text.includes(k))) {
       labels.push(label);
     }
