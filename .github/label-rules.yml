@@ -1,103 +1,28 @@
-version: 1
-
 size:
+  prefix: "size/"
   thresholds:
     XS: 50
     S: 150
     M: 300
     L: 700
-  prefix: "size/"
 
 rules:
+  - label: "documentation"
+    match: ["\\.md$", "readme"]
+    sources: ["filenames"]
 
-  # --- TYPE LABELS ---
-  - label: bug-fix
-    sources: [title, description, commits]
-    match:
-      - fix
-      - bug
-      - resolve
-      - issue
+  - label: "database"
+    match: ["\\.sql$", "migration", "schema"]
+    sources: ["filenames"]
 
-  - label: feature
-    sources: [title, description]
-    match:
-      - feat
-      - feature
-      - add
+  - label: "security-review"
+    match: ["password", "token", "secret", "auth", "encrypt"]
+    sources: ["diff", "title", "description"]
 
-  - label: refactoring
-    sources: [title, description, diff]
-    match:
-      - refactor
-      - cleanup
-      - restructure
+  - label: "performance"
+    match: ["cache", "optimize", "performance"]
+    sources: ["title", "description"]
 
-  - label: security-review
-    sources: [diff, filenames]
-    match:
-      - security
-      - auth
-      - password
-      - token
-      - encrypt
-      - jwt
-      - oauth
-
-  - label: performance
-    sources: [diff, description]
-    match:
-      - performance
-      - optimize
-      - faster
-      - cache
-
-  - label: documentation
-    sources: [filenames]
-    match:
-      - readme
-      - docs
-      - documentation
-
-  - label: tests
-    sources: [filenames]
-    match:
-      - test
-      - spec
-
-  - label: database
-    sources: [filenames, diff]
-    match:
-      - migration
-      - schema
-      - sql
-      - database
-
-  - label: api-change
-    sources: [filenames, diff]
-    match:
-      - controller
-      - endpoint
-      - api
-      - breaking
-
-  - label: dependencies
-    sources: [filenames]
-    match:
-      - package.json
-      - pom.xml
-      - build.gradle
-      - requirements.txt
-
-  # --- PRIORITY ---
-  - label: critical
-    sources: [title, description]
-    match:
-      - critical
-      - urgent
-      - hotfix
-      - production
-
-  - label: needs-review
-    conditions:
-      min_lines_changed: 300
+  - label: "tests"
+    match: ["test", "spec"]
+    sources: ["filenames"]
