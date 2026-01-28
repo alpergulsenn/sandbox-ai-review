@@ -111,14 +111,14 @@ namespace UserManagement
         public double AverageAge()
         {
             var users = LoadUsers();
-            int total = 0;
+            int totall = 0;
 
             foreach (var user in users.Values)
             {
-                total += user.Age;
+                totall += user.Age;
             }
 
-            return total / users.Count; // division by zero risk
+            return totall / users.Count; // division by zero risk
         }
     }
 
