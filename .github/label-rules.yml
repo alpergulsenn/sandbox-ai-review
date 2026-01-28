@@ -1,0 +1,103 @@
+version: 1
+
+size:
+  thresholds:
+    XS: 50
+    S: 150
+    M: 300
+    L: 700
+  prefix: "size/"
+
+rules:
+
+  # --- TYPE LABELS ---
+  - label: bug-fix
+    sources: [title, description, commits]
+    match:
+      - fix
+      - bug
+      - resolve
+      - issue
+
+  - label: feature
+    sources: [title, description]
+    match:
+      - feat
+      - feature
+      - add
+
+  - label: refactoring
+    sources: [title, description, diff]
+    match:
+      - refactor
+      - cleanup
+      - restructure
+
+  - label: security-review
+    sources: [diff, filenames]
+    match:
+      - security
+      - auth
+      - password
+      - token
+      - encrypt
+      - jwt
+      - oauth
+
+  - label: performance
+    sources: [diff, description]
+    match:
+      - performance
+      - optimize
+      - faster
+      - cache
+
+  - label: documentation
+    sources: [filenames]
+    match:
+      - readme
+      - docs
+      - documentation
+
+  - label: tests
+    sources: [filenames]
+    match:
+      - test
+      - spec
+
+  - label: database
+    sources: [filenames, diff]
+    match:
+      - migration
+      - schema
+      - sql
+      - database
+
+  - label: api-change
+    sources: [filenames, diff]
+    match:
+      - controller
+      - endpoint
+      - api
+      - breaking
+
+  - label: dependencies
+    sources: [filenames]
+    match:
+      - package.json
+      - pom.xml
+      - build.gradle
+      - requirements.txt
+
+  # --- PRIORITY ---
+  - label: critical
+    sources: [title, description]
+    match:
+      - critical
+      - urgent
+      - hotfix
+      - production
+
+  - label: needs-review
+    conditions:
+      min_lines_changed: 300
