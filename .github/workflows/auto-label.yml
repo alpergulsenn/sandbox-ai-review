@@ -25,7 +25,9 @@ jobs:
           npm init -y
           npm install js-yaml @actions/github
 
-      - name: Run label engine
+      - name: Auto Label PR
         run: node .github/label-engine/index.js
         env:
+          PROVIDER: github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
