@@ -12,6 +12,13 @@ publish_labels = true
 add_custom_labels = true
 publish_custom_labels = true
 
+# --- İNCELEME ARACI İÇİN ÖZEL AYAR ---
+[pr_reviewer]
+enable_custom_labels = true
+add_custom_labels = true
+publish_custom_labels = true
+enable_review_labels_effort = false
+
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
@@ -29,13 +36,13 @@ description = "pr_agent: PR has large changes, between 300 and 700 lines changed
 description = "pr_agent: PR has very large changes, more than 700 lines changed"
 
 # --- TÜR LABEL'LARI ---
-[custom_labels."bug-fix"]
+[custom_labels."Bug-fix"]
 description = "pr_agent: PR contains bug fixes or resolves issues. Look for keywords like 'fix', 'bug', 'resolve', 'issue' in the PR description or commit messages"
 
-[custom_labels."feature"]
+[custom_labels."Feature"]
 description = "pr_agent: PR adds new features or functionality to the codebase"
 
-[custom_labels."refactoring"]
+[custom_labels."Refactoring"]
 description = "pr_agent: PR refactors existing code without changing functionality. Look for improved structure, SOLID principles application, or code cleanup"
 
 [custom_labels."security-review"]
