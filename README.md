@@ -31,7 +31,7 @@ An automated, context-aware AI agent that evaluates architectural patterns, secu
 <a href="#about-the-project">About The Project</a>
 <ul>
 <li><a href="#built-with">Built With</a></li>
-<li><a href="#context--decision-logic">Context & Decision Logic</a></li>
+<li><a href="#context-decision-logic">Context & Decision Logic</a></li>
 </ul>
 </li>
 <li>
@@ -66,11 +66,9 @@ This project addresses the gap between traditional linters and senior-level arch
 * [][GitHub-url]
 * [][Gemini-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
-## 🧠 Context & Decision Logic
+## <a id="context-decision-logic"></a> 🧠 Context & Decision Logic
 
 As requested by the engineering lead, the agent operates on a **"Contextual Reasoning"** model:
 
@@ -96,8 +94,6 @@ As requested by the engineering lead, the agent operates on a **"Contextual Reas
 3. **Define Rules:** Create `.pr_agent.toml` in the root directory to define your `custom_labels` and tool permissions.
 4. **Set Environment:** Ensure `CONFIG.CUSTOM_MODEL_MAX_TOKENS` is set to `8192` to optimize Gemini 2.0 Flash performance.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
 ## Usage
@@ -109,18 +105,16 @@ The agent triggers automatically on PR creation or via manual commands:
 * **`/generate_labels`**: Force-updates PR labels based on custom TOML rules.
 * **`/ask [question]`**: Interactively consult the Senior Architect persona.
 
-### 📺 Live Demo Instructions
+### <a id="live-demo"></a> 📺 Live Demo Instructions
 
 To demonstrate the "Context Logic" during a review:
 
 1. Create a new branch in **sandbox-ai-review** and push a code change containing an **SRP violation** or a **Hardcoded Secret**.
 2. Open a PR; the agent will automatically flag these as `Medium` severity issues.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
-## 💰 Cost Analysis (January 2026)
+## <a id="cost-analysis"></a> 💰 Cost Analysis (January 2026)
 
 Based on real-world monitoring, the Gemini 2.0 Flash implementation provides industry-leading efficiency:
 
@@ -133,11 +127,9 @@ Based on real-world monitoring, the Gemini 2.0 Flash implementation provides ind
 
 *Note: Costs are optimized by excluding non-code files like `.json`, `.css`, and `.svg`.*
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
-## 🧠 Interactive Prompts (/ask)
+## <a id="best-prompts"></a> 🧠 Interactive Prompts (/ask)
 
 Beyond automated reviews, the agent serves as an interactive engineering partner via the `/ask` command:
 
@@ -148,8 +140,6 @@ Beyond automated reviews, the agent serves as an interactive engineering partner
 | `"Explain this logic to a Junior Developer. What is the mental model?"` | `"Bu mantığı bir Junior yazılımcıya açıkla. Buradaki zihinsel model nedir?"` |
 | `"Generate 5 edge cases (nulls, timeouts) that are NOT handled in this PR."` | `"Bu PR'da ele alınmayan 5 uç durum (null, zaman aşımı) üret."` |
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
 ## Contact
@@ -157,8 +147,6 @@ Beyond automated reviews, the agent serves as an interactive engineering partner
 **Alper** - Computer Engineering Intern at Abralabs
 
 Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.google.com/search?q=https://github.com/alpergulsenn/sandbox-ai-review)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
