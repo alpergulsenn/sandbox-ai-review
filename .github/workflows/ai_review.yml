@@ -53,11 +53,11 @@ jobs:
               # --- PR DESCRIPTION SETTINGS ---
           PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
           PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false"  
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true" # etiketleri PR'a ekle
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false" # PR açıklamasında gösterme
-          PR_DESCRIPTION.PUBLISH_LABELS: "false" # PR açıklamasında gösterme
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false" # etiketleri PR'a ekle
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true" # PR açıklamasında gösterme
+          PR_DESCRIPTION.PUBLISH_LABELS: "true" # PR açıklamasında gösterme
 
-          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
+          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" 
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"     
 
           # --- REVIEWER CONFIGURATION ---

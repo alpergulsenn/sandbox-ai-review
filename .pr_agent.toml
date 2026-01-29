@@ -5,9 +5,9 @@ enable_custom_labels = true
 # --- İNCELEME ARACI İÇİN ÖZEL AYAR ---
 [PR_DESCRIPTION]
 enable_custom_labels = true
-add_custom_labels = true
-publish_custom_labels = false
-enable_review_labels_effort = false
+add_custom_labels = false
+publish_custom_labels = true
+enable_review_labels_effort = true
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
