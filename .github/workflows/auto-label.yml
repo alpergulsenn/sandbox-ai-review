@@ -1,0 +1,10 @@
+name: Auto Label PR
+
+on:
+  pull_request:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "auto label disabled"
