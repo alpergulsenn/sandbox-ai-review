@@ -53,9 +53,9 @@ jobs:
               # --- PR DESCRIPTION SETTINGS (PR Açıklaması) ---
           PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
           PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false"  
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "false" # Açıklamaya custom labelları ekle
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "false" # Açıklamada label gösterme
-          PR_DESCRIPTION.PUBLISH_LABELS: "false" # Açıklamada label gösterme
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true" # Açıklamaya custom labelları ekle
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true" # Açıklamada label göster
+          PR_DESCRIPTION.PUBLISH_LABELS: "true" # Açıklamada label göster
 
           PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" 
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"     
@@ -70,9 +70,9 @@ jobs:
           PR_REVIEWER.PERSISTENT_COMMENT: "true" 
 
           # --- REVIEW LABELS (Otomatik label'lar) ---
-          PR_DESCRIPTION.ENABLE_REVIEW_LABELS_EFFORT: "true"
-          PR_DESCRIPTION.ENABLE_REVIEW_LABELS_SECURITY: "true"
-          PR_DESCRIPTION.ENABLE_AUTO_APPROVAL: "false"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "false"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "false"
+          PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
           PR_REVIEWER.MINIMAL_SEVERITY: "Medium"

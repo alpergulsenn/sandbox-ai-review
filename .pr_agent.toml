@@ -1,6 +1,9 @@
 # --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
+add_custom_labels = false
+publish_custom_labels = false
+publish_labels = false
 
 # --- DESCRIBE (PR Açıklaması) ARACI İÇİN ÖZEL AYAR ---
 [pr_description]
