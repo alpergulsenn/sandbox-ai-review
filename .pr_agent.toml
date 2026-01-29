@@ -1,3 +1,67 @@
 # --- GENEL AYARLAR ---
 [config]
-enable_pr_agent = true
+enable_custom_labels = true
+
+# --- DESCRIBE ARACI İÇİN ÖZEL AYAR ---
+[pr_description]
+# Describe komutu çalıştığında özel etiketleri de analiz etmesini zorunlu kılar
+enable_custom_labels = true 
+# Etiketleri PR açıklamasının içinde de listelemesini sağlar
+publish_labels = true
+# Custom labelları otomatik eklemek için
+add_custom_labels = true
+publish_custom_labels = true
+
+# --- BOYUT LABEL'LARI ---
+[custom_labels."size/XS"]
+description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
+
+[custom_labels."size/S"]
+description = "pr_agent: PR has small changes, between 50 and 150 lines changed"
+
+[custom_labels."size/M"]
+description = "pr_agent: PR has moderate changes, between 150 and 300 lines changed"
+
+[custom_labels."size/L"]
+description = "pr_agent: PR has large changes, between 300 and 700 lines changed"
+
+[custom_labels."size/XL"]
+description = "pr_agent: PR has very large changes, more than 700 lines changed"
+
+# --- TÜR LABEL'LARI ---
+[custom_labels."bug-fix"]
+description = "pr_agent: PR contains bug fixes or resolves issues. Look for keywords like 'fix', 'bug', 'resolve', 'issue' in the PR description or commit messages"
+
+[custom_labels."feature"]
+description = "pr_agent: PR adds new features or functionality to the codebase"
+
+[custom_labels."refactoring"]
+description = "pr_agent: PR refactors existing code without changing functionality. Look for improved structure, SOLID principles application, or code cleanup"
+
+[custom_labels."security-review"]
+description = "pr_agent: PR contains security-related changes, authentication, authorization, encryption, or sensitive data handling. Look for keywords like 'security', 'auth', 'password', 'token', 'encrypt'"
+
+[custom_labels."performance"]
+description = "pr_agent: PR improves performance, optimizes algorithms, or reduces resource usage"
+
+[custom_labels."documentation"]
+description = "pr_agent: PR mainly updates documentation, comments, or README files"
+
+[custom_labels."tests"]
+description = "pr_agent: PR adds or modifies test cases, test coverage, or testing infrastructure"
+
+[custom_labels."database"]
+description = "pr_agent: PR contains database schema changes, migrations, or SQL queries"
+
+[custom_labels."api-change"]
+description = "pr_agent: PR modifies API endpoints, request/response structures, or breaks backward compatibility"
+
+[custom_labels."dependencies"]
+description = "pr_agent: PR updates dependencies, packages, or external libraries"
+
+# --- ÖNCELIK LABEL'LARI ---
+[custom_labels."critical"]
+description = "pr_agent: PR fixes critical bugs, security vulnerabilities, or production issues that need immediate attention"
+
+[custom_labels."needs-review"]
+description = "pr_agent: PR requires careful review due to complexity, architectural changes, or high risk"
