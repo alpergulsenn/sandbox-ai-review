@@ -85,12 +85,11 @@ jobs:
 
           # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-            1. CLEAN CODE: Evaluate code against SOLID, DRY, and KISS principles.
-            2. SECURITY SCAN: Check for OWASP vulnerabilities and potential CVE-related patterns.
-            3. EXTERNAL STANDARDS: Use the coding patterns from https://www.baeldung.com/java-8-streams as a mandatory reference. 
-               Ensure that any Java Stream usage follows the efficiency and readability rules described on that page.
-            4. HIGH IMPACT ONLY: Do not comment on formatting or minor style choices. 
-               Only report issues that affect system stability, performance, or security.
+          1. CLEAN CODE: Evaluate the code against SOLID, DRY, and KISS principles.
+          2. SECURITY SCAN: Identify OWASP-related vulnerabilities, insecure patterns, and potential CVE risks.
+          3. HIGH IMPACT ONLY: 
+              Ignore formatting, naming, or stylistic preferences.
+              Report only issues affecting security, correctness, performance, scalability, or maintainability.
 
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
