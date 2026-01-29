@@ -1,4 +1,4 @@
-# 🤖 AI-Powered Code Review Agent
+# 🤖 sandbox-ai-review (AI powered code review agent)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
