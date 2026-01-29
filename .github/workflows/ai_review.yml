@@ -50,15 +50,18 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"  # false: Custom labelları kullan, true: Sistem labellarını kullan
 
-              # --- PR DESCRIPTION SETTINGS (PR Açıklaması) ---
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true" # Açıklamaya custom labelları ekle
-          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
-          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false" # Otomatik label'ları etkinleştir
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true" # Açıklamada label göster
-          PR_DESCRIPTION.PUBLISH_LABELS: "true" # Açıklamada label göster
-
+              # --- PR DESCRIPTION SETTINGS ---
           PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" 
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"     
+
+          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
+          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false" # Otomatik label'ları etkinleştir
+
+          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true" # Açıklamaya custom labelları ekle
+          PR_DESCRIPTION.ADD_AUTO_LABELS: "false"
+
+          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true" # Açıklamada label göster
+          PR_DESCRIPTION.PUBLISH_LABELS: "false" # Açıklamada label göster
 
           # --- REVIEWER CONFIGURATION ---
           PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
