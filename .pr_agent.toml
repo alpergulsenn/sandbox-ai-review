@@ -1,23 +1,14 @@
 # --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
-add_custom_labels = false
-publish_custom_labels = false
-publish_labels = false
 
 # --- DESCRIBE (PR Açıklaması) ARACI İÇİN ÖZEL AYAR ---
 [pr_description]
 enable_custom_labels = true
-add_custom_labels = false
-publish_custom_labels = false
-publish_labels = false
-
-# --- İNCELEME (REVIEW) ARACI İÇİN ÖZEL AYAR ---
-[pr_reviewer]
-enable_custom_labels = true
+enable_auto_labels = true
 add_custom_labels = true
-publish_custom_labels = false
-enable_review_labels_effort = false
+publish_custom_labels = true
+publish_labels = true
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
