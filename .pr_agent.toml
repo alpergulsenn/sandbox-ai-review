@@ -5,7 +5,7 @@ enable_custom_labels = true
 # --- DESCRIBE (PR Açıklaması) ARACI İÇİN ÖZEL AYAR ---
 [pr_description]
 enable_custom_labels = true
-enable_auto_labels = true
+enable_auto_labels = false
 add_custom_labels = true
 publish_custom_labels = true
 publish_labels = true
