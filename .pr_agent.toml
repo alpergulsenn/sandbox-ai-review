@@ -11,6 +11,7 @@ add_custom_labels = true
 add_auto_labels = false
 
 publish_custom_labels = true
+publish_labels = true
 publish_auto_labels = false
 
 # --- BOYUT LABEL'LARI ---
