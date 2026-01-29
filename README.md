@@ -1,10 +1,10 @@
 # 🤖 AI-Powered Code Review Agent
 
-[][contributors-url]
-[][forks-url]
-[][stars-url]
-[][issues-url]
-[][linkedin-url]
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <br />
 <div align="center">
@@ -144,7 +144,7 @@ Beyond automated reviews, the agent serves as an interactive engineering partner
 
 ## Contact
 
-**Alper** - Computer Engineering Intern at Abralabs
+**Alper** - Computer Engineering Intern at Abralabs  : [LinkedIn](https://www.google.com/search?q=https://www.linkedin.com/in/alpergulsenn/)
 
 Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.google.com/search?q=https://github.com/alpergulsenn/sandbox-ai-review)
 
@@ -156,3 +156,17 @@ Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.go
 * [Codium-ai/pr-agent Documentation]
 * [Google Cloud Vertex AI Reference]
 
+[contributors-shield]: https://img.shields.io/github/contributors/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
+[contributors-url]: https://github.com/alpergulsenn/sandbox-ai-review/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
+[forks-url]: https://github.com/alpergulsenn/sandbox-ai-review/network/members
+
+[stars-shield]: https://img.shields.io/github/stars/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
+[stars-url]: https://github.com/alpergulsenn/sandbox-ai-review/stargazers
+
+[issues-shield]: https://img.shields.io/github/issues/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
+[issues-url]: https://github.com/alpergulsenn/sandbox-ai-review/issues
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/alpergulsenn
