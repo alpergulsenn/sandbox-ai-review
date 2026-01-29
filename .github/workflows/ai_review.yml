@@ -51,11 +51,12 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
 
               # --- PR DESCRIPTION SETTINGS ---
-          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
-          PR_DESCRIPTION.ENABLE_AUTO_LABELS: "false"  
-          PR_DESCRIPTION.ADD_CUSTOM_LABELS: "true" # etiketleri PR açıklamasına ekleme
-          PR_DESCRIPTION.PUBLISH_CUSTOM_LABELS: "true"
-          #PR_DESCRIPTION.PUBLISH_LABELS: "true"
+          PR_REVIEWER.ENABLE_CUSTOM_LABELS: "true"
+          PR_REVIEWER.ENABLE_AUTO_LABELS: "false"  
+          PR_REVIEWER.ADD_CUSTOM_LABELS: "true" # etiketleri PR'a ekle
+          PR_REVIEWER.PUBLISH_CUSTOM_LABELS: "false" # PR açıklamasında gösterme
+          PR_REVIEWER.PUBLISH_LABELS: "false" # PR açıklamasında gösterme
+          
 
           PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" # Sorunu çözmek için false yapalım
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"     
@@ -70,8 +71,8 @@ jobs:
           PR_REVIEWER.PERSISTENT_COMMENT: "true" 
 
           # --- REVIEW LABELS (Otomatik label'lar) ---
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "false"     # custom etiketleri kullan, otomatik effort etiketi ekleme
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "false"   # custom etiketleri kullan, otomatik security etiketi ekleme
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "true"
           PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
@@ -97,5 +98,5 @@ jobs:
                Only report issues that affect system stability, performance, or security.
 
          # --- DEBUG MODE ---
-          config.verbosity_level: 2
-          github_action_config.enable_output: "true"          
+          #config.verbosity_level: 2
+          #github_action_config.enable_output: "true"          
