@@ -62,9 +62,11 @@ This project addresses the gap between traditional linters and senior-level arch
 
 ### Built With
 
-* [][GCP-url]
-* [][GitHub-url]
-* [][Gemini-url]
+[![GCP][GCP-shield]][GCP-url]
+
+[![GitHubActions][GitHub-shield]][GitHub-url]
+
+[![Gemini][Gemini-shield]][Gemini-url]
 
 ---
 
@@ -170,3 +172,12 @@ Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.go
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/alpergulsenn
+
+[GCP-shield]: https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white
+[GCP-url]: https://cloud.google.com/
+
+[GitHub-shield]: https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white
+[GitHub-url]: https://github.com/features/actions
+
+[Gemini-shield]: https://img.shields.io/badge/Gemini_2.0_Flash-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white
+[Gemini-url]: https://ai.google.dev/
