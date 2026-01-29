@@ -146,7 +146,7 @@ Beyond automated reviews, the agent serves as an interactive engineering partner
 
 ## Contact
 
-**Alper** - Computer Engineering Intern at Abralabs  : [LinkedIn](https://www.google.com/search?q=https://www.linkedin.com/in/alpergulsenn/)
+**Alper** - Computer Engineering Intern at Abralabs  : [LinkedIn](https://www.linkedin.com/in/alpergulsenn/)
 
 Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.google.com/search?q=https://github.com/alpergulsenn/sandbox-ai-review)
 
