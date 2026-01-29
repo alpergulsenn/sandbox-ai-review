@@ -57,7 +57,7 @@ This project addresses the gap between traditional linters and senior-level arch
 **Why sandbox-ai-review?**
 
 * **Architectural Insight:** Goes beyond "Parsing Errors" to find "Architectural Debt" like SRP violations and Callback Hell.
-* **Extreme Cost Efficiency:** Runs at approximately **0.10 TL per PR** using Gemini 2.0 Flash.
+* **Extreme Cost Efficiency:** Runs at approximately **0.10 TL per PR** (0,0023 $) using Gemini 2.0 Flash.
 * **Dynamic Language Support:** Detects user intent and communicates in both English and Turkish while preserving technical terms.
 
 ### Built With
@@ -126,8 +126,8 @@ Based on real-world monitoring, the Gemini 2.0 Flash implementation provides ind
 
 | Metric | Value (Turkish Lira - TL) |
 | --- | --- |
-| **Avg. Cost per PR** | **~0.11 TL** |
-| **Daily Peak (Jan 27)** | 1.6 TL (for 12 PRs) |
+| **Avg. Cost per PR** | **~0.11 TL** (0,0023 $) |
+| **Daily Peak (Jan 27)** | 1.6 TL -> 0,036$ (for 12 PRs)  |
 | **Input Cost** | Higher due to context-heavy diff reading |
 | **Output Cost** | Lower due to strict `Medium` severity filtering |
 
@@ -168,22 +168,3 @@ Project Link: [https://github.com/alpergulsenn/sandbox-ai-review](https://www.go
 * [Codium-ai/pr-agent Documentation]
 * [Google Cloud Vertex AI Reference]
 
----
-
-
-[]: #
-[contributors-url]: https://www.google.com/search?q=%5Bhttps://github.com/alpergulsenn/sandbox-ai-review/graphs/contributors%5D
-[]: #
-[forks-url]: https://www.google.com/search?q=%5Bhttps://github.com/alpergulsenn/sandbox-ai-review/network/members%5D
-[]: #
-[stars-url]: https://www.google.com/search?q=%5Bhttps://github.com/alpergulsenn/sandbox-ai-review/stargazers%5D
-[]: #
-[issues-url]: https://www.google.com/search?q=%5Bhttps://github.com/alpergulsenn/sandbox-ai-review/issues%5D
-[]: #
-[linkedin-url]: https://www.google.com/search?q=%5Bhttps://linkedin.com/in/alpergulsenn%5D
-[]: #
-[gcp-url]: https://www.google.com/search?q=%5Bhttps://cloud.google.com/%5D
-[]: #
-[github-url]: https://www.google.com/search?q=%5Bhttps://github.com/features/actions%5D
-[]: #
-[gemini-url]: https://www.google.com/search?q=%5Bhttps://ai.google.dev/%5D
