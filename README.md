@@ -1,3 +1,4 @@
+## <a id="readme-top"></a> 
 # 🤖 sandbox-ai-review (AI powered code review agent)
 
 [![Contributors][contributors-shield]][contributors-url]
@@ -10,7 +11,7 @@
 <div align="center">
 <h3 align="center">Vertex AI & Gemini 2.0 Flash Code Reviewer</h3>
 
-## <a id="readme-top"></a> 
+
 
 <p align="center">
 An automated, context-aware AI agent that evaluates architectural patterns, security risks, and code quality directly within GitHub Pull Requests.
@@ -98,6 +99,7 @@ As requested by the engineering lead, the agent operates on a **"Contextual Reas
 3. **Define Rules:** Create `.pr_agent.toml` in the root directory to define your `custom_labels` and tool permissions.
 4. **Set Environment:** Ensure `CONFIG.CUSTOM_MODEL_MAX_TOKENS` is set to `8192` to optimize Gemini 2.0 Flash performance.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
 
 ## Usage
@@ -116,6 +118,7 @@ To demonstrate the "Context Logic" during a review:
 1. Create a new branch in **sandbox-ai-review** and push a code change containing an **SRP violation** or a **Hardcoded Secret**.
 2. Open a PR; the agent will automatically flag these as `Medium` severity issues.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
 
 ## <a id="cost-analysis"></a> 💰 Cost Analysis (January 2026)
@@ -131,6 +134,7 @@ Based on real-world monitoring, the Gemini 2.0 Flash implementation provides ind
 
 *Note: Costs are optimized by excluding non-code files like `.json`, `.css`, and `.svg`.*
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
 
 ## <a id="best-prompts"></a> 🧠 Interactive Prompts (/ask)
@@ -168,6 +172,9 @@ You can force the agent to evaluate code against specific industry standards or 
 * [Haktan Enes Biçer - Abralabs Technical Lead]
 * [Codium-ai/pr-agent Documentation]
 * [Google Cloud Vertex AI Reference]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
 [contributors-shield]: https://img.shields.io/github/contributors/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
 [contributors-url]: https://github.com/alpergulsenn/sandbox-ai-review/graphs/contributors
