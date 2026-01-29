@@ -10,6 +10,8 @@
 <div align="center">
 <h3 align="center">Vertex AI & Gemini 2.0 Flash Code Reviewer</h3>
 
+## <a id="readme-top"></a> 
+
 <p align="center">
 An automated, context-aware AI agent that evaluates architectural patterns, security risks, and code quality directly within GitHub Pull Requests.
 <br />
@@ -141,6 +143,17 @@ Beyond automated reviews, the agent serves as an interactive engineering partner
 | `"Under a load of 1 million concurrent requests, where is the most likely bottleneck?"` | `"1 milyon eşzamanlı istek altında, en muhtemel darboğaz neresidir?"` |
 | `"Explain this logic to a Junior Developer. What is the mental model?"` | `"Bu mantığı bir Junior yazılımcıya açıkla. Buradaki zihinsel model nedir?"` |
 | `"Generate 5 edge cases (nulls, timeouts) that are NOT handled in this PR."` | `"Bu PR'da ele alınmayan 5 uç durum (null, zaman aşımı) üret."` |
+
+### 🌐 Reference-Based Analysis (External Link Reasoning)
+You can force the agent to evaluate code against specific industry standards or documentation:
+
+| English Prompt (External Context) | Türkçesi (Harici Bağlam Sorgulama) |
+| :--- | :--- |
+| `"Based on the standards in <URL>, does this code align with their 'Best Practices'?"` | `"<URL> linkindeki standartlara göre, bu kod oradaki 'En İyi Pratikler' ile uyumlu mu?"` |
+| `"Act as an expert in the framework in <URL>. Evaluate my PR using their tuning guide."` | `"<URL> linkindeki framework'te uzman biri gibi davran. PR'ımı oradaki ayar rehberine göre değerlendir."` |
+| `"Compare my logic with the article in <URL>. Are there any missing edge cases?"` | `"Mantığımı <URL> makalesiyle karşılaştır. Eksik bir uç durum (edge case) var mı?"` |
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
