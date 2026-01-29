@@ -2,18 +2,6 @@
 [config]
 enable_custom_labels = true
 
-# --- DESCRIBE (PR Açıklaması) ARACI İÇİN ÖZEL AYAR ---
-[pr_description]
-enable_custom_labels = true
-enable_auto_labels = false
-
-add_custom_labels = true
-add_auto_labels = false
-
-publish_custom_labels = true
-publish_labels = true
-publish_auto_labels = false
-
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
