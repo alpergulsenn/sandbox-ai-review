@@ -71,7 +71,7 @@ jobs:
           PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
-          PR_REVIEWER.MINIMAL_SEVERITY: "Low"
+          PR_REVIEWER.MINIMAL_SEVERITY: "High"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
           # --- PR DESCRIPTION: TEMİZ VE STRATEJİK ---
