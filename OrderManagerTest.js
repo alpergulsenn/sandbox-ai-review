@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 1758a5dae666c43b5859376061643aa34cbe641a
 // OrderManager.js - E-ticaret Sipariş Yönetimi
 
 // Linter Hatası: 'var' kullanımı (Modern JS'de 'const' veya 'let' tercih edilir)
@@ -70,12 +66,7 @@ class OrderManager {
         return this.orders.filter(o => o.user === username);
     }
 
-    // Linter Hatası: Aynı isme sahip iki parametre (Shadowing)
-<<<<<<< HEAD
-    calculateFinalPrice(tax, price) {
-=======
     calculateFinalPrice(price, price) {
->>>>>>> 1758a5dae666c43b5859376061643aa34cbe641a
         return price * 1.2;
     }
 
@@ -113,8 +104,3 @@ const cart = [
 
 manager.processOrder(user, cart).then(res => console.log("Order Processed"));
 
-<<<<<<< HEAD
-// Linter Hatası: Dosya sonunda gereksiz fazla boş satırlar
-=======
-// Linter Hatası: Dosya sonunda gereksiz fazla boş satırlar
->>>>>>> 1758a5dae666c43b5859376061643aa34cbe641a
