@@ -66,14 +66,12 @@ This project addresses the gap between traditional linters and senior-level arch
 ### Built With
 
 [![GCP][GCP-shield]][GCP-url]
-
 [![GitHubActions][GitHub-shield]][GitHub-url]
-
 [![Gemini][Gemini-shield]][Gemini-url]
 
 ---
 
-## <a id="context-decision-logic"></a> 🧠 Context & Decision Logic
+## <a id="context-decision-logic"></a>  Context & Decision Logic
 
 As requested by the engineering lead, the agent operates on a **"Contextual Reasoning"** model:
 
@@ -84,20 +82,53 @@ As requested by the engineering lead, the agent operates on a **"Contextual Reas
 
 ---
 
-## Getting Started
+##  Getting Started
 
-### Prerequisites
+To get your AI Code Reviewer up and running in your repository, follow these detailed steps. This setup ensures seamless integration between **Google Vertex AI** and **GitHub Actions**.
 
-* A **Google Cloud Project** with **Vertex AI API** enabled.
-* A **Service Account** with `Vertex AI User` permissions.
-* GitHub Repository secrets: `GCP_SA_KEY` (JSON key) and `GCP_PROJECT_ID`.
+###  Prerequisites
 
-### Installation
+Before proceeding with the installation, ensure you have the following components ready:
 
-1. **Configure GitHub Secrets:** Add your GCP Service Account JSON to `GCP_SA_KEY`.
-2. **Add Workflow:** Place `ai_review.yml` in `.github/workflows/`.
-3. **Define Rules:** Create `.pr_agent.toml` in the root directory to define your `custom_labels` and tool permissions.
-4. **Set Environment:** Ensure `CONFIG.CUSTOM_MODEL_MAX_TOKENS` is set to `8192` to optimize Gemini 2.0 Flash performance.
+* **Google Cloud Project:** A GCP project with the **Vertex AI API** enabled.
+* **Service Account:** A dedicated Service Account with the **Vertex AI User** role assigned.
+* **Authentication Key:** A generated **JSON key** for the Service Account mentioned above.
+* **GitHub Repository Access:** Permissions to manage **GitHub Secrets** and **Actions** in your repository.
+---
+
+###  Installation
+
+Follow these steps to configure your environment and deploy the agent.
+
+1. **Configure GitHub Secrets**
+Go to your repository **Settings > Secrets and variables > Actions** and add the following secrets:
+* `GCP_SA_KEY`: Paste the entire content of your Service Account JSON key.
+* `GCP_PROJECT_ID`: Enter your Google Cloud Project ID.
+
+2. **Add the Review Workflow**
+Create a new file at `.github/workflows/ai_review.yml` and paste your workflow configuration. This file triggers the AI review process on Pull Requests.
+```yaml
+# Path: .github/workflows/ai_review.yml
+# This triggers Gemini 2.0 Flash for automated reviews
+
+```
+
+3. **Define Custom Review Rules**
+Create a `.pr_agent.toml` file in your root directory. This file is critical for defining **custom_labels** (e.g., size, priority) and setting tool permissions.
+```toml
+[pr_reviewer]
+num_code_suggestions = 5
+inline_code_comments = true
+
+```
+
+4. **Optimize Model Performance**
+To ensure the best analysis from **Gemini 2.0 Flash**, verify that your environment variables are set to allow sufficient context.
+* Set `CONFIG.CUSTOM_MODEL_MAX_TOKENS` to `8192` in your configuration to handle larger code diffs efficiently.
+
+
+5. **Test the Integration**
+Open a test Pull Request. The agent should automatically trigger, providing a **summary**, **labels**, and **code suggestions** based on your TOML rules.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
@@ -121,7 +152,7 @@ To demonstrate the "Context Logic" during a review:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
 
-## <a id="cost-analysis"></a> 💰 Cost Analysis (January 2026)
+## <a id="cost-analysis"></a>  Cost Analysis (January 2026)
 
 Based on real-world monitoring, the Gemini 2.0 Flash implementation provides industry-leading efficiency:
 
@@ -137,7 +168,7 @@ Based on real-world monitoring, the Gemini 2.0 Flash implementation provides ind
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
 
-## <a id="best-prompts"></a> 🧠 Interactive Prompts (/ask)
+## <a id="best-prompts"></a>  Interactive Prompts (/ask)
 
 Beyond automated reviews, the agent serves as an interactive engineering partner via the `/ask` command:
 
