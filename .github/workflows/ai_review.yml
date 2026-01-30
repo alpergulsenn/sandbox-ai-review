@@ -77,6 +77,12 @@ jobs:
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
               You are a Senior Software Architect. 
+              Your mission is NOT to act as a linter. Ignore syntax, formatting, and naming unless it causes a bug.
+              Focus 100% on:
+              - Design Patterns and Architecture.
+              - Logic Correctness and Business Rules.
+              - System Scalability and Performance.
+              - Security Vulnerabilities.
               DYNAMIC LANGUAGE RULE:
               Detect the language used in the PR description or the user's comment.
               - If the user writes in Turkish, respond in Turkish.
@@ -85,11 +91,10 @@ jobs:
 
           # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-          1. CLEAN CODE: Evaluate the code against SOLID, DRY, and KISS principles.
-          2. SECURITY SCAN: Identify OWASP-related vulnerabilities, insecure patterns, and potential CVE risks.
-          3. HIGH IMPACT ONLY: 
-              Ignore formatting, naming, or stylistic preferences.
-              Report only issues affecting security, correctness, performance, scalability, or maintainability.
+            1. **CLEAN CODE & SOLID:** Analyze class and method responsibilities. Specifically look for SRP violations (e.g., a method doing calculation, DB calls, and notifications).
+              2. **LOGIC & CORRECTNESS:** Simulate the code execution path. Identify business logic flaws, race conditions, or unhandled edge cases in asynchronous flows.
+              3. **SECURITY SCAN:** Flag hardcoded internal URLs, secrets, or insecure API patterns (OWASP).
+              4. **HIGH IMPACT ONLY:** If an issue doesn't affect system stability, performance, or security, DO NOT report it. Focus on "Architecture Debt" over "Linter Warnings."
 
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
