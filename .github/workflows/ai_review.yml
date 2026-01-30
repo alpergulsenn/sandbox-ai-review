@@ -104,7 +104,21 @@ jobs:
               3. **PERFORMANCE:** Catch $O(n)$ searches in large arrays where a Map/Index is needed.
               4. **SECURITY:** Treat hardcoded internal URLs as high-risk exposure.
               5. **RELIABILITY:** Flag empty catch blocks and missing 'await' calls as potential system failures.
-              
+          
+          # --- CODE SUGGESTIONS: ARCHITECTURAL REFACTORING ---
+          PR_CODE_SUGGESTIONS.NUM_CODE_SUGGESTIONS: 5
+          
+          PR_CODE_SUGGESTIONS.MAIN_INSTRUCTION: |
+              Instead of simple fixes, provide "Architectural Refactoring" suggestions.
+              - Focus on modern patterns (e.g., converting Callback Hell to Async/Await).
+              - Suggest high-performance data structures (e.g., replacing Array.filter with Map).
+              - Resolve Logical Collisions (Shadowing) with clear descriptive naming.
+
+          PR_CODE_SUGGESTIONS.EXTRA_INSTRUCTIONS: |
+              1. **PATTERN REFACTOR:** If you find nested timeouts (Callback Hell), provide a refactored version using `Promise.all` or a clean `async/await` chain.
+              2. **PERFORMANCE UPGRADE:** For the linear search in `findOrderByUser`, suggest an implementation using a `Map` in the constructor for O(1) lookups.
+              3. **LOGIC COLLISION:** When fixing shadowing (e.g., price, price), explain the "Cognitive Load" it creates and suggest domain-driven naming.
+              4. **ERROR ROBUSTNESS:** Don't just add a log to empty catch blocks; suggest a proper error propagation or recovery strategy.
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
           #github_action_config.enable_output: "true"          
