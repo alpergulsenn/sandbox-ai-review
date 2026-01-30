@@ -84,51 +84,52 @@ As requested by the engineering lead, the agent operates on a **"Contextual Reas
 
 ##  Getting Started
 
-To get your AI Code Reviewer up and running in your repository, follow these detailed steps. This setup ensures seamless integration between **Google Vertex AI** and **GitHub Actions**.
+Follow these steps to deploy the **sandbox-ai-review** agent in your repository. This setup ensures your code is audited by **Gemini 2.0 Flash** with senior-level precision.
 
 ###  Prerequisites
 
-Before proceeding with the installation, ensure you have the following components ready:
+Before installation, ensure you have the following:
 
-* **Google Cloud Project:** A GCP project with the **Vertex AI API** enabled.
-* **Service Account:** A dedicated Service Account with the **Vertex AI User** role assigned.
-* **Authentication Key:** A generated **JSON key** for the Service Account mentioned above.
-* **GitHub Repository Access:** Permissions to manage **GitHub Secrets** and **Actions** in your repository.
+* **Google Cloud Project:** A GCP project with **Vertex AI API** enabled.
+* **Service Account:** A service account with the **Vertex AI User** role.
+* **Authentication:** A downloaded **JSON key** for the service account.
+* **Secrets Access:** Permission to add **Actions Secrets** to your GitHub repository.
+
 ---
 
 ###  Installation
 
-Follow these steps to configure your environment and deploy the agent.
-
 1. **Configure GitHub Secrets**
-Go to your repository **Settings > Secrets and variables > Actions** and add the following secrets:
-* `GCP_SA_KEY`: Paste the entire content of your Service Account JSON key.
-* `GCP_PROJECT_ID`: Enter your Google Cloud Project ID.
-
-2. **Add the Review Workflow**
-Create a new file at `.github/workflows/ai_review.yml` and paste your workflow configuration. This file triggers the AI review process on Pull Requests.
-```yaml
-# Path: .github/workflows/ai_review.yml
-# This triggers Gemini 2.0 Flash for automated reviews
-
-```
-
-3. **Define Custom Review Rules**
-Create a `.pr_agent.toml` file in your root directory. This file is critical for defining **custom_labels** (e.g., size, priority) and setting tool permissions.
-```toml
-[pr_reviewer]
-num_code_suggestions = 5
-inline_code_comments = true
-
-```
-
-4. **Optimize Model Performance**
-To ensure the best analysis from **Gemini 2.0 Flash**, verify that your environment variables are set to allow sufficient context.
-* Set `CONFIG.CUSTOM_MODEL_MAX_TOKENS` to `8192` in your configuration to handle larger code diffs efficiently.
+Navigate to **Settings > Secrets and variables > Actions** and add:
+* `GCP_SA_KEY`: The full content of your Service Account JSON key.
+* `GCP_PROJECT_ID`: Your unique Google Cloud Project ID.
 
 
-5. **Test the Integration**
-Open a test Pull Request. The agent should automatically trigger, providing a **summary**, **labels**, and **code suggestions** based on your TOML rules.
+2. **Add the Workflow**
+Create `.github/workflows/ai_review.yml` and paste the provided workflow configuration. This triggers the agent on `pull_request` events.
+3. **Define Custom Labels**
+Add `.pr_agent.toml` to your root directory. This file defines the logic for categories like `security-review`, `performance`, and `Bug-fix`.
+4. **Set Token Limits**
+Ensure `CONFIG.CUSTOM_MODEL_MAX_TOKENS` is set to **8192** in your YAML to allow the agent to process complex files without truncation.
+
+---
+
+###  Understanding Label Automation
+
+The agent is designed for **High-Signal Feedback**. To maintain a clean PR history, labeling follows a hybrid automation model:
+
+* **Automatic Labels:** On PR creation, only the **Review Effort** label (e.g., `Effort: Low/High`) is applied automatically.
+* **Manual Trigger (Custom Labels):** To apply your specific project labels defined in `.pr_agent.toml` (like `size/M`, `database`, or `security-review`), simply comment on the PR:
+> `/generate_labels`
+
+
+* **Why?** This prevents labels from being misapplied before the developer has finished their initial commits, ensuring the final categorization is accurate.
+
+---
+
+###  Pro Tip for the Demo
+
+ By using `/generate_labels` manually, we ensure we only spend tokens on labeling once the PR is "Review Ready," saving approximately **20% in unnecessary token costs** per PR lifecycle.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 ---
