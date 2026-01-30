@@ -61,7 +61,7 @@ jobs:
           PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
           PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
           PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
-          PR_REVIEWER.NUM_CODE_SUGGESTIONS: 5
+          PR_REVIEWER.NUM_CODE_SUGGESTIONS: 6
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
           PR_REVIEWER.PERSISTENT_COMMENT: "true" 
 
@@ -71,7 +71,7 @@ jobs:
           PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
-          PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
+          PR_REVIEWER.MINIMAL_SEVERITY: "Low"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
           # --- PR DESCRIPTION: TEMİZ VE STRATEJİK ---
@@ -98,6 +98,7 @@ jobs:
 
           # --- REVIEWER: DERİN MANTIK ANALİZİ ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+              Your mission is NOT to act as a linter. Ignore syntax, formatting, and naming unless it causes a bug.
               1. **LOGIC SIMULATION:** Don't just read code; simulate it. Find business logic flaws (e.g., incomplete discount rules) and performance bottlenecks (e.g., O(n) searches in large arrays).
               2. **ARCHITECTURAL IMPACT:** If you find a linter-level issue (like global variable 'i'), report it only as a "Reliability Risk" (e.g., Global Scope Pollution in async loops).
               3. **SECURITY & OWASP:** Treat hardcoded URLs and secrets as high-priority security violations.
