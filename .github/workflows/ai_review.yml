@@ -61,7 +61,7 @@ jobs:
           PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
           PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
           PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
-          PR_REVIEWER.NUM_CODE_SUGGESTIONS: 6
+          PR_REVIEWER.NUM_CODE_SUGGESTIONS: 8
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
           PR_REVIEWER.PERSISTENT_COMMENT: "true" 
 
@@ -71,15 +71,15 @@ jobs:
           PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
 
           # --- SEVERITY FILTERING ---
-          PR_REVIEWER.MINIMAL_SEVERITY: "High"
+          PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
           # --- PR DESCRIPTION: TEMİZ VE STRATEJİK ---
           PR_DESCRIPTION.MAIN_INSTRUCTION: |
-              Create a "Technical Executive Summary."
-              1. **High-Level Goal:** What is this PR trying to achieve architecturally?
-              2. **Architectural Debt & Risks:** Only list high-impact issues (SOLID, Performance, Security).
-              3. **DO NOT list linter/style issues** (like var usage, semicolons, etc.) in the description.
+              Create a "Technical Architecture Summary." 
+              - Explain the 'Context Logic' behind the changes.
+              - Focus on High-Impact Architectural Debt.
+              - **STRICT RULE:** Do not list linter/formatting issues (var, ==, empty catch) in the description.
 
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
@@ -96,13 +96,14 @@ jobs:
               - If the user writes in English, respond in English.
               - Keep technical architecture terms in English (e.g., Dependency Injection, Single Responsibility Principle).
 
-          # --- REVIEWER: DERİN MANTIK ANALİZİ ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-              Your mission is NOT to act as a linter. Ignore syntax, formatting, and naming unless it causes a bug.
-              1. **LOGIC SIMULATION:** Don't just read code; simulate it. Find business logic flaws (e.g., incomplete discount rules) and performance bottlenecks (e.g., O(n) searches in large arrays).
-              2. **ARCHITECTURAL IMPACT:** If you find a linter-level issue (like global variable 'i'), report it only as a "Reliability Risk" (e.g., Global Scope Pollution in async loops).
-              3. **SECURITY & OWASP:** Treat hardcoded URLs and secrets as high-priority security violations.
-              4. **STRICT FILTER:** If it doesn't break the system, slow it down, or open a security hole, IGNORE IT.
+              You are an Auditor. Do not act as a linter. 
+              Find exactly 5-6 issues from these categories:
+              1. **LOGIC COLLISION:** Identify duplicate parameters like `calculateFinalPrice(price, price)` which break logic.
+              2. **ARCHITECTURAL DEBT:** Highlight SRP violations where logic and I/O are coupled.
+              3. **PERFORMANCE:** Catch $O(n)$ searches in large arrays where a Map/Index is needed.
+              4. **SECURITY:** Treat hardcoded internal URLs as high-risk exposure.
+              5. **RELIABILITY:** Flag empty catch blocks and missing 'await' calls as potential system failures.
               
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
