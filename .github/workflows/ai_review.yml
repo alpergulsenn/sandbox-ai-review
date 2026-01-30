@@ -74,6 +74,13 @@ jobs:
           PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
           
+          # --- PR DESCRIPTION: TEMİZ VE STRATEJİK ---
+          PR_DESCRIPTION.MAIN_INSTRUCTION: |
+              Create a "Technical Executive Summary."
+              1. **High-Level Goal:** What is this PR trying to achieve architecturally?
+              2. **Architectural Debt & Risks:** Only list high-impact issues (SOLID, Performance, Security).
+              3. **DO NOT list linter/style issues** (like var usage, semicolons, etc.) in the description.
+
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
               You are a Senior Software Architect. 
@@ -89,13 +96,13 @@ jobs:
               - If the user writes in English, respond in English.
               - Keep technical architecture terms in English (e.g., Dependency Injection, Single Responsibility Principle).
 
-          # --- CORE REVIEW INSTRUCTIONS (SOLID, SECURITY, CUSTOM URL) ---
+          # --- REVIEWER: DERİN MANTIK ANALİZİ ---
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-            1. **CLEAN CODE & SOLID:** Analyze class and method responsibilities. Specifically look for SRP violations (e.g., a method doing calculation, DB calls, and notifications).
-              2. **LOGIC & CORRECTNESS:** Simulate the code execution path. Identify business logic flaws, race conditions, or unhandled edge cases in asynchronous flows.
-              3. **SECURITY SCAN:** Flag hardcoded internal URLs, secrets, or insecure API patterns (OWASP).
-              4. **HIGH IMPACT ONLY:** If an issue doesn't affect system stability, performance, or security, DO NOT report it. Focus on "Architecture Debt" over "Linter Warnings."
-
+              1. **LOGIC SIMULATION:** Don't just read code; simulate it. Find business logic flaws (e.g., incomplete discount rules) and performance bottlenecks (e.g., O(n) searches in large arrays).
+              2. **ARCHITECTURAL IMPACT:** If you find a linter-level issue (like global variable 'i'), report it only as a "Reliability Risk" (e.g., Global Scope Pollution in async loops).
+              3. **SECURITY & OWASP:** Treat hardcoded URLs and secrets as high-priority security violations.
+              4. **STRICT FILTER:** If it doesn't break the system, slow it down, or open a security hole, IGNORE IT.
+              
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
           #github_action_config.enable_output: "true"          
