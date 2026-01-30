@@ -132,6 +132,7 @@ The agent is designed for **High-Signal Feedback**. To maintain a clean PR histo
  By using `/generate_labels` manually, we ensure we only spend tokens on labeling once the PR is "Review Ready," saving approximately **20% in unnecessary token costs** per PR lifecycle.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 ## Usage
@@ -151,6 +152,7 @@ To demonstrate the "Context Logic" during a review:
 2. Open a PR; the agent will automatically flag these as `Medium` severity issues.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 ## <a id="cost-analysis"></a>  Cost Analysis (January 2026)
@@ -167,6 +169,7 @@ Based on real-world monitoring, the Gemini 2.0 Flash implementation provides ind
 *Note: Costs are optimized by excluding non-code files like `.json`, `.css`, and `.svg`.*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 ## <a id="best-prompts"></a>  Interactive Prompts (/ask)
@@ -206,6 +209,7 @@ You can force the agent to evaluate code against specific industry standards or 
 * [Google Cloud Vertex AI Reference]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 [contributors-shield]: https://img.shields.io/github/contributors/alpergulsenn/sandbox-ai-review.svg?style=for-the-badge
