@@ -1,6 +1,8 @@
 # --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
+[pr_reviewer] 
+publish_output = true
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
