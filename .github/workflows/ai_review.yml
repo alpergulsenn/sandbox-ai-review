@@ -10,6 +10,10 @@ jobs:
   pr_agent_job: 
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
+
+    container:
+      image: codiumai/pr-agent:latest
+
     permissions:
       issues: write
       pull-requests: write
@@ -22,13 +26,19 @@ jobs:
           fetch-depth: 0
 
       # Botu çalıştır ---
-      - name: Create Credentials File
-        run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
+      #- name: Create Credentials File
+        #run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
         
-      - name: PR Agent Action
+      - name: Run PR Agent
+        shell: sh
+        run : |
+          echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
+          # Imaj içindeki cli.py'yi doğrudan çağırıyoruz
+          python /app/pr_agent/cli.py
+
         # uses: Codium-ai/pr-agent@main # Kaynak koddan build eder. Her seferinde build etmesin diye aşağıdaki kodu kullandık.
-        uses: docker://codiumai/pr-agent:latest # Build etmek yerine hazır imajı çeker
+        #uses: docker://codiumai/pr-agent:latest # Build etmek yerine hazır imajı çeker
         
         env:
           # --- GCP VERTEX AI AUTH ---
