@@ -27,8 +27,7 @@ jobs:
 
         
       - name: PR Agent Action
-        # uses: Codium-ai/pr-agent@main # Kaynak koddan build eder. Her seferinde build etmesin diye aşağıdaki kodu kullandık.
-        uses: docker://codiumai/pr-agent:latest # Build etmek yerine hazır imajı çeker
+        uses: Codium-ai/pr-agent@main # Kaynak koddan build eder. Her seferinde build etmesin diye aşağıdaki kodu kullandık.
         
         env:
           # --- GCP VERTEX AI AUTH ---
@@ -42,7 +41,8 @@ jobs:
           CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
-          
+          CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage gösterme.
+
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
           CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
