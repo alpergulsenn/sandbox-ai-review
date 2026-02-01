@@ -42,6 +42,7 @@ jobs:
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
           CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage gösterme.
+          CONFIG.ENABLE_AI_METADATA: "true" # PR'a AI metadata ekler.
 
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
