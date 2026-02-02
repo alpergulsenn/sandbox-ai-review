@@ -107,7 +107,34 @@ jobs:
               3. **PERFORMANCE:** Catch $O(n)$ searches in large arrays where a Map/Index is needed.
               4. **SECURITY:** Treat hardcoded internal URLs as high-risk exposure.
               5. **RELIABILITY:** Flag empty catch blocks and missing 'await' calls as potential system failures.
-                  
+              RELEVANCE GATE (MANDATORY):
+                - Before answering any /ask request, first determine whether the input is relevant to:
+                  * Software development
+                  * Code review
+                  * System design
+                  * Security
+                  * The programming languages or technologies used in this repository
+                - If the request is NOT relevant, DO NOT answer the question.
+                - Instead, respond with a short rejection message.
+
+              ALLOWED RESPONSE WHEN IRRELEVANT:
+                - "This request is not related to the codebase or software development. Please ask a code-related question."
+                - "The provided link or question is not relevant to this repository's technology stack."
+
+              STRICT RULE:
+                - Never attempt to infer, guess, or creatively answer irrelevant questions.
+
+              TECHNOLOGY MATCH CHECK:
+                - If a link or document is provided, verify that it matches the repository's primary languages.
+                - If the link targets a different ecosystem (e.g., Java docs for a C# repo),
+                  respond that the resource is not applicable and do not summarize it.
+              
+                  NON-TECHNICAL INPUT:
+                - If the user input is casual, conversational, or unrelated (e.g. "hi", "naber"),
+                  respond with:
+                  "I can only assist with code-related or technical questions in this context."
+
+
           # --- CODE SUGGESTIONS: ARCHITECTURAL REFACTORING ---
           PR_CODE_SUGGESTIONS.NUM_CODE_SUGGESTIONS: 5
           
