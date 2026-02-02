@@ -125,3 +125,10 @@ jobs:
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
           #github_action_config.enable_output: "true"          
+          
+      - name: 📊 Mühendislik Maliyet Raporu
+        if: always()
+        run: |
+          echo "### 🚀 PR Analiz Maliyet Karnesi" >> $GITHUB_STEP_SUMMARY
+          echo "| Parametre | Değer |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
