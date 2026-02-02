@@ -42,7 +42,6 @@ jobs:
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
           CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage gösterme.
-          CONFIG.ENABLE_AI_METADATA: "true" # PR'a AI metadata ekler.
 
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
@@ -125,10 +124,3 @@ jobs:
          # --- DEBUG MODE ---
           #config.verbosity_level: 2
           #github_action_config.enable_output: "true"          
-          
-      - name: 📊 Mühendislik Maliyet Raporu
-        if: always()
-        run: |
-          echo "### 🚀 PR Analiz Maliyet Karnesi" >> $GITHUB_STEP_SUMMARY
-          echo "| Parametre | Değer |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
