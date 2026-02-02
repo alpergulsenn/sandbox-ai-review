@@ -3,6 +3,7 @@
 enable_custom_labels = true
 [pr_reviewer] 
 publish_output = true
+description = "Strict code reviewer focused on security, performance, and maintainability"
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
