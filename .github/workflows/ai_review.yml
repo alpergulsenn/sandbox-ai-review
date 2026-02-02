@@ -41,7 +41,7 @@ jobs:
           CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
-          CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage gösterme.
+          CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage.
 
         
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
@@ -107,7 +107,7 @@ jobs:
               3. **PERFORMANCE:** Catch $O(n)$ searches in large arrays where a Map/Index is needed.
               4. **SECURITY:** Treat hardcoded internal URLs as high-risk exposure.
               5. **RELIABILITY:** Flag empty catch blocks and missing 'await' calls as potential system failures.
-          
+                  
           # --- CODE SUGGESTIONS: ARCHITECTURAL REFACTORING ---
           PR_CODE_SUGGESTIONS.NUM_CODE_SUGGESTIONS: 5
           
@@ -122,6 +122,20 @@ jobs:
               2. **PERFORMANCE UPGRADE:** For the linear search in `findOrderByUser`, suggest an implementation using a `Map` in the constructor for O(1) lookups.
               3. **LOGIC COLLISION:** When fixing shadowing (e.g., price, price), explain the "Cognitive Load" it creates and suggest domain-driven naming.
               4. **ERROR ROBUSTNESS:** Don't just add a log to empty catch blocks; suggest a proper error propagation or recovery strategy.
-         # --- DEBUG MODE ---
-          #config.verbosity_level: 2
-          #github_action_config.enable_output: "true"          
+
+          # --- CUSTOM AUDITOR MODE (DETERMİNİSTİK DENETÇİ) ---
+          PR_CUSTOM_PROMPT.PROMPT: |
+            Sen bir Senior Software Architect ve Teknik Denetçisin. 
+            Sana iletilen soruyu ( {{question}} ) ve PR içeriğini incele.
+            
+            STRICT RELEVANCY RULES:
+            1. Soru mevcut PR'ın kodu, mimarisi, güvenliği veya performansı ile ilgili DEĞİLSE cevap verme.
+            2. Eğer kullanıcı alakasız bir dış bağlantı (link) dökümanı attıysa ve bu döküman PR'daki teknoloji stack'i ile ilgili değilse reddet.
+            3. Reddetme durumunda sadece şunu yaz: "İstek PR'ın teknik bağlamı (Context) dışında kalıyor. Mimari denetim sınırları içerisinde kalalım."
+            
+            RESPONSE RULES:
+            - Cevabını Türkçe ver ama teknik terimleri (Dependency Injection, High-Impact Debt vb.) İngilizce bırak.
+            - Her zaman çözüm odaklı ve Senior bir tonda konuş.
+              # --- DEBUG MODE ---
+                #config.verbosity_level: 2
+                #github_action_config.enable_output: "true"          
