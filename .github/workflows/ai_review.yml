@@ -7,7 +7,7 @@ on:
     types: [created]
 
 jobs:
-  pr_agent_job: 
+  pr_agent_job:
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
@@ -25,10 +25,9 @@ jobs:
       - name: Create Credentials File
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
-        
       - name: PR Agent Action
         uses: Codium-ai/pr-agent@main # Kaynak koddan build eder. Her seferinde build etmesin diye aşağıdaki kodu kullandık.
-        
+
         env:
           # --- GCP VERTEX AI AUTH ---
           GITHUB_TOKEN: ${{ github.token }}
@@ -38,12 +37,11 @@ jobs:
 
           # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
           CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için  
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "8192"
-          CONFIG.PUBLISH_OUTPUT: "true"  # Loglarda Token usage.
+          CONFIG.PUBLISH_OUTPUT: "true" # Loglarda Token usage.
 
-        
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
           # İstenmeyen dosyaları görmezden gel
           CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg', '.html']"
@@ -51,12 +49,13 @@ jobs:
           # --- GITHUB ACTION AUTO SETTINGS ---
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS:
+            "true"
 
-              # --- PR DESCRIPTION SETTINGS (Custom Labellar Otomatik) ---
+            # --- PR DESCRIPTION SETTINGS (Custom Labellar Otomatik) ---
           PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
 
-          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false" 
+          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false"
           PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
 
           # --- REVIEWER CONFIGURATION ---
@@ -66,7 +65,7 @@ jobs:
           PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
           PR_REVIEWER.NUM_CODE_SUGGESTIONS: 8
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
-          PR_REVIEWER.PERSISTENT_COMMENT: "true" 
+          PR_REVIEWER.PERSISTENT_COMMENT: "true"
 
           # --- REVIEW LABELS (Custom labellar otomatik apply edilir) ---
           PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
@@ -76,89 +75,72 @@ jobs:
           # --- SEVERITY FILTERING ---
           PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
-          
+
           # --- PR DESCRIPTION: TEMİZ VE STRATEJİK ---
           PR_DESCRIPTION.MAIN_INSTRUCTION: |
-              Create a "Technical Architecture Summary." 
-              - Explain the 'Context Logic' behind the changes.
-              - Focus on High-Impact Architectural Debt.
-              - **STRICT RULE:** Do not list linter/formatting issues (var, ==, empty catch) in the description.
+            Create a "Technical Architecture Summary." 
+            - Explain the 'Context Logic' behind the changes.
+            - Focus on High-Impact Architectural Debt.
+            - **STRICT RULE:** Do not list linter/formatting issues (var, ==, empty catch) in the description.
 
           # --- DYNAMIC LANGUAGE & PERSONA ---
           PR_REVIEWER.SYSTEM_PROMPT: |
-              You are a Senior Software Architect. 
-              Your mission is NOT to act as a linter. Ignore syntax, formatting, and naming unless it causes a bug.
-              Focus 100% on:
-              - Design Patterns and Architecture.
-              - Logic Correctness and Business Rules.
-              - System Scalability and Performance.
-              - Security Vulnerabilities.
-              DYNAMIC LANGUAGE RULE:
-              Detect the language used in the PR description or the user's comment.
-              - If the user writes in Turkish, respond in Turkish.
-              - If the user writes in English, respond in English.
-              - Keep technical architecture terms in English (e.g., Dependency Injection, Single Responsibility Principle).
+            You are a Senior Software Architect and Auditor. 
+            Your mission is NOT to act as a linter. Ignore syntax and formatting unless it causes a bug.
+
+            # --- CORE FOCUS ---
+            1. Design Patterns & Architecture.
+            2. Logic Correctness & Business Rules.
+            3. System Scalability & Performance.
+            4. Security Vulnerabilities.
+
+            # --- DYNAMIC LANGUAGE ROUTING ---
+            Before analyzing, detect the PR's primary language. Apply the specific "Rulebook" below:
+
+            ## [.NET / C# RULEBOOK]
+            - Scrutinize Async/Await patterns (avoid Async-over-sync, ensure Task health).
+            - Check for Dependency Injection lifecycle errors (Captive Dependencies).
+            - Audit LINQ queries for performance (IQueryable vs. IEnumerable leaks).
+            - Flag missing 'AsNoTracking' in read-only EF Core queries.
+
+            ## [JAVA RULEBOOK]
+            - Audit Stream API usage for efficiency and potential thread-safety risks.
+            - Check for safe 'Optional' usage (avoid .get() without checks).
+            - Flag synchronization issues in multi-threaded contexts.
+            - Review Lombok usage (e.g., @Data pitfalls in circular references).
+
+            # --- COMMUNICATION RULE ---
+            - Detect the user's language in the PR description or comments.
+            - If Turkish, respond in Turkish. If English, respond in English.
+            - Keep technical terms (e.g., 'Dependency Injection') in English.
 
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-                PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-                  GLOBAL MODE RULE (CRITICAL):
-                  - You operate in TWO MODES only:
-                    1. REVIEW MODE → triggered ONLY when the user explicitly asks for code or PR review.
-                    2. ASK MODE → triggered by /ask.
-
-                  ASK MODE RULES (STRICT):
-                  - /ask is NOT a review command.
-                  - In ASK MODE you MUST NOT:
-                    - review code
-                    - analyze the PR
-                    - summarize diffs
-                    - infer intent
-                    - provide fallback reviews
-
-                  STRICT RELEVANCE GATE:
-                  - If the /ask question is NOT directly related to:
-                    - the current PR diff
-                    - the repository’s programming languages
-                    - software engineering, code, architecture, security, or tooling
-                    → YOU MUST REFUSE.
-
-                  HARD STOP BEHAVIOR:
-                  - If relevance is uncertain, treat it as NOT relevant.
-                  - Respond with ONE short refusal sentence only.
-                  - Do NOT explain the refusal.
-                  - Do NOT continue with any analysis.
-
-                  APPROVED REFUSAL RESPONSE (USE EXACTLY):
-                  "This request is not relevant to the code or the pull request."
-
-                  REVIEW MODE RULES:
-                  - Enter REVIEW MODE ONLY when explicitly requested.
-                  - In REVIEW MODE:
-                    - You are an Auditor, not a linter.
-                    - Find EXACTLY 5–6 issues from the categories below:
-                      1. LOGIC COLLISION
-                      2. ARCHITECTURAL DEBT
-                      3. PERFORMANCE
-                      4. SECURITY
-                      5. RELIABILITY
+            PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+                  You are an Auditor. Do not act as a linter. 
+                  Find exactly 5-6 issues from these categories:
+                1. **LOGIC COLLISION:** Identify duplicate parameters like `calculateFinalPrice(price, price)` which break logic.
+                2. **ARCHITECTURAL DEBT:** Highlight SRP violations where logic and I/O are coupled.
+                3. **PERFORMANCE:** Catch $O(n)$ searches in large arrays where a Map/Index is needed.
+                4. **SECURITY:** Treat hardcoded internal URLs as high-risk exposure.
+                5. **RELIABILITY:** Flag empty catch blocks and missing 'await' calls as potential system failures.
 
           # --- CODE SUGGESTIONS: ARCHITECTURAL REFACTORING ---
           PR_CODE_SUGGESTIONS.NUM_CODE_SUGGESTIONS: 5
-          
+
           PR_CODE_SUGGESTIONS.MAIN_INSTRUCTION: |
-              Instead of simple fixes, provide "Architectural Refactoring" suggestions.
-              - Focus on modern patterns (e.g., converting Callback Hell to Async/Await).
-              - Suggest high-performance data structures (e.g., replacing Array.filter with Map).
-              - Resolve Logical Collisions (Shadowing) with clear descriptive naming.
+            Instead of simple fixes, provide "Architectural Refactoring" suggestions.
+            - Focus on modern patterns (e.g., converting Callback Hell to Async/Await).
+            - Suggest high-performance data structures (e.g., replacing Array.filter with Map).
+            - Resolve Logical Collisions (Shadowing) with clear descriptive naming.
 
           PR_CODE_SUGGESTIONS.EXTRA_INSTRUCTIONS: |
-              1. **PATTERN REFACTOR:** If you find nested timeouts (Callback Hell), provide a refactored version using `Promise.all` or a clean `async/await` chain.
-              2. **PERFORMANCE UPGRADE:** For the linear search in `findOrderByUser`, suggest an implementation using a `Map` in the constructor for O(1) lookups.
-              3. **LOGIC COLLISION:** When fixing shadowing (e.g., price, price), explain the "Cognitive Load" it creates and suggest domain-driven naming.
-              4. **ERROR ROBUSTNESS:** Don't just add a log to empty catch blocks; suggest a proper error propagation or recovery strategy.
+            1. **PATTERN REFACTOR:** If you find nested timeouts (Callback Hell), provide a refactored version using `Promise.all` or a clean `async/await` chain.
+            2. **PERFORMANCE UPGRADE:** For the linear search in `findOrderByUser`, suggest an implementation using a `Map` in the constructor for O(1) lookups.
+            3. **LOGIC COLLISION:** When fixing shadowing (e.g., price, price), explain the "Cognitive Load" it creates and suggest domain-driven naming.
+            4. **ERROR ROBUSTNESS:** Don't just add a log to empty catch blocks; suggest a proper error propagation or recovery strategy.
 
           # --- ASK ARACINI DENETÇİYE DÖNÜŞTÜRME ---
           PR_QUESTIONS.SYSTEM_PROMPT: |
             Sen Senior Software Architect ve Denetçisin. 
             Sana sorulan her soruda önce 'PR ile alakasını' sorgula. 
-            Eğer alakasızsa veya bir geyik muhabbetiyse "PR bağlamı dışı" diyerek reddet.    
+            Eğer alakasızsa veya bir geyik muhabbetiyse "PR bağlamı dışı" diyerek reddet.
