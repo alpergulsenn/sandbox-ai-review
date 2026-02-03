@@ -36,8 +36,8 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
           # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash-001" # Derin analiz için
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash-001" # Etiketleme ve özet için
+          CONFIG.MODEL: "vertex_ai/gemini-3-flash-preview" # Derin analiz için
+          CONFIG.MODEL_TURBO: "vertex_ai/gemini-3-flash-preview" # Etiketleme ve özet için
           CONFIG.FALLBACK_MODELS: "[]"
           CONFIG.CUSTOM_MODEL_MAX_TOKENS: "16000"
           CONFIG.PUBLISH_OUTPUT: "true" # Loglarda Token usage.
