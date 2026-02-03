@@ -1,7 +1,8 @@
 # --- GENEL AYARLAR ---
 [config]
 enable_custom_labels = true
-[pr_reviewer] 
+
+[pr_reviewer]
 publish_output = true
 description = "Strict code reviewer focused on security, performance, and maintainability"
 
