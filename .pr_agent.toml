@@ -1,6 +1,6 @@
 [config]
 enable_custom_labels = true
-model = "vertex_ai/gemini-3-flash"
+model = "vertex_ai/gemini-2.0-flash"
 fallback_models = []
 publish_output = true
 
