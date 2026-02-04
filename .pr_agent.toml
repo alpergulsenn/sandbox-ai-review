@@ -1,11 +1,19 @@
 [config]
-enable_custom_labels = true
 model = "vertex_ai/gemini-2.0-flash"
+model_turbo = "vertex_ai/gemini-2.0-flash"
 fallback_models = []
+custom_model_max_tokens = 50000
+ignore_file_extensions = [".json", ".md", ".css", ".lock", ".svg"]
 publish_output = true
+enable_custom_labels = true
+
+
+[pr_description]
+enable_custom_labels = true
+use_description_markers = false
+add_original_user_description = true
 
 [pr_reviewer]
-publish_output = true
 num_code_suggestions = 10
 inline_code_comments = true
 persistent_comment = true
