@@ -77,3 +77,8 @@ jobs:
           # --- Code Suggestion Settings ---
           PR_CODE_SUGGESTION.NUM_CODE_SUGGESTIONS: "5"
           
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+            MANDATORY: Find EXACTLY 8 issues.
+            Current PR has: hardcoded URL, empty catch, var usage, ==, unused var, filter loop, callback hell, unreachable code.
+            Report ALL of them.
+          
