@@ -304,7 +304,9 @@ export const updateArticle = async (article: any, slug: string, id: number) => {
   });
 
   if (!existingArticle) {
-    throw new HttpException(404, {});
+    throw new HttpException(404, {
+        message: 'Article not found'
+    });
   }
 
   if (existingArticle.author.id !== id) {
