@@ -39,7 +39,7 @@ jobs:
           CONFIG.MODEL: "vertex_ai/gemini-2.5-flash" # Derin analiz için
           CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.5-flash" # Etiketleme ve özet için
           CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "30000" # Daha büyük PR'lar için token limitini artırıldı.
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "50000" # Daha büyük PR'lar için token limitini artırıldı.
           CONFIG.PUBLISH_OUTPUT: "true" # Loglarda Token usage.
 
           # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
