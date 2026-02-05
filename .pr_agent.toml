@@ -17,7 +17,7 @@ add_original_user_description = true
 
 [pr_reviewer]
 num_code_suggestions = 10
-inline_code_comments = false
+inline_code_comments = true
 persistent_comment = true
 minimal_severity = "Medium"
 require_security_review = true
