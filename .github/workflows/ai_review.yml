@@ -40,3 +40,19 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
 
+          PR_REVIEWER.SYSTEM_PROMPT: |
+            If PR description contains Turkish keywords (düzelt, güncelle, ekle, hata):
+            → Respond in Turkish
+
+            If English keywords (fix, update, add, bug):
+            → Respond in English
+
+            ALWAYS keep technical terms in English:
+            - useEffect, async/await, XSS, SQL injection, dangerouslySetInnerHTML
+
+            Example Turkish response:
+            ## 🔴 KRİTİK Sorunlar
+            ### 1. Güvenlik: XSS Açığı
+            **Sorun:** dangerouslySetInnerHTML sanitizasyon olmadan kullanılmış
+            **Risk:** Saldırgan zararlı kod enjekte edebilir
+            
