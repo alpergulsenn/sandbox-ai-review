@@ -42,35 +42,39 @@ jobs:
       - name: Construct Dynamic Rules from Files
         id: rule_builder
         run: |
-          # 1. Önce geçici bir "rules.txt" dosyası oluşturuyoruz.
-          # Bu dosya bizim güvenli tampon bölgemiz.
-            echo "Context: Corporate Architectural Review Mode Active" > final_rules.txt
-            
-            # ---------------- C# LOGIC ----------------
-            if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
-              echo -e "\n\n" >> final_rules.txt
-              # cat komutu içeriği yorumlamadan direkt sona ekler (APPEND)
-              cat .github/pr_rules/csharp_rules.md >> final_rules.txt
-            fi
+          echo "### 🛡️ Active Security & Architecture Protocols" > active_rules.md
+          echo "*(Auto-injected via Workflow)*" >> active_rules.md
+          echo "" >> active_rules.md            
 
-            # ---------------- JAVA LOGIC ----------------
-            if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
-              echo -e "\n\n" >> final_rules.txt
-              cat .github/pr_rules/java_rules.md >> final_rules.txt
-            fi
+          # C# Logic
+          if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
+            echo -e "\n\n" >> active_rules.md
+            cat .github/pr_rules/csharp_rules.md >> active_rules.md
+          fi
 
-            # ---------------- JS/TS LOGIC ----------------
-            if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
-              echo -e "\n\n" >> final_rules.txt
-              cat .github/pr_rules/js_rules.md >> final_rules.txt
-            fi
+          # Java Logic
+          if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
+            echo -e "\n\n" >> active_rules.md
+            cat .github/pr_rules/java_rules.md >> active_rules.md
+          fi
 
-            # 2. Şimdi bu temiz dosyayı GitHub ENV'ye aktarıyoruz.
-            # "EOF" bloğu sayesinde ters tırnaklar sorun çıkarmaz.
-            
-            echo "DYNAMIC_EXTRA_INSTRUCTIONS<<EOF" >> $GITHUB_ENV
-            cat final_rules.txt >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
+          # JS/TS Logic
+          if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
+            echo -e "\n\n" >> active_rules.md
+            cat .github/pr_rules/js_rules.md >> active_rules.md
+          fi
+
+          {
+            echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<EOF"
+            cat active_rules.md
+            echo "EOF"
+          } >> $GITHUB_ENV
+
+          {
+            echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
+            cat active_rules.md
+            echo "EOF"
+          } >> $GITHUB_ENV
 
       # 3. Adım: Debugging (Artık backtick hatası görmemelisin)
       - name: Debug Rules
@@ -92,10 +96,8 @@ jobs:
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
-          #PRREVIEWER__EXTRA_INSTRUCTIONS: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
-          #PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
-
           # --- GITHUB ACTION AUTO SETTINGS ---
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
+          CONFIG__MODEL_TEMPERATURE: "0.2"
