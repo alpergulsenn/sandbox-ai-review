@@ -80,7 +80,7 @@ jobs:
       - name: Debug Rules
         run: |
           echo "🔍 ENJECTE EDİLEN KURALLAR (RAW VIEW):"
-          cat final_rules.txt
+          cat active_rules.md
 
       # Botu çalıştır ---
       - name: Create Credentials File
