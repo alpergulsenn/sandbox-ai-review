@@ -15,11 +15,75 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      # Kaynak kodu ve .pr_agent.toml'u içeri al
+      # Kaynak kodu içeri al
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      # 1. adım - Değişen dosyaların dilini tespit et
+      - name: Detect Changes
+        id: changes
+        uses: tj-actions/changed-files@v44
+        with:
+          files_yaml: |
+            java:
+              - '**/*.java'
+              - '**/*.jar'
+            js:
+              - '**/*.js'
+              - '**/*.ts'
+              - '**/*.jsx'
+            csharp:
+              - '**/*.cs'
+              - '**/*.csproj'
+                2. Adım: MD Dosyalarından Kuralları Okuyup Değişkeni Hazırla
+      - name: Construct Dynamic Rules from Files
+        id: rule_builder
+        run: |
+          ACCUMULATED_RULES=""
+
+          # ---------------- JAVA LOGIC ----------------
+          if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
+            echo "Java changes detected. Loading java_rules.md..."
+            
+            # Dosya içeriğini değişkene atıyoruz
+            JAVA_CONTENT=$(cat .github/pr_rules/java_rules.md)
+            
+            # Ana kural setine ekliyoruz (Başlık ekleyerek)
+            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### JAVA ARCHITECTURE STANDARDS:\n${JAVA_CONTENT}"
+          fi
+
+          # ---------------- JS/TS LOGIC ----------------
+          if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
+            echo "JS changes detected. Loading js_rules.md..."
+            
+            JS_CONTENT=$(cat .github/pr_rules/js_rules.md)
+            
+            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### JAVASCRIPT/TS GUIDELINES:\n${JS_CONTENT}"
+          fi
+
+          # ---------------- C# LOGIC ----------------
+          if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
+            echo "C# changes detected. Loading csharp_rules.md..."
+            
+            CS_CONTENT=$(cat .github/pr_rules/csharp_rules.md)
+            
+            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### C# CORPORATE RULES:\n${CS_CONTENT}"
+          fi
+
+          # Eğer hiç kural yüklenmediyse default bir mesaj koyabiliriz (Opsiyonel)
+          if [[ -z "$ACCUMULATED_RULES" ]]; then
+            ACCUMULATED_RULES="Apply standard Clean Code principles."
+          fi
+
+          # KRİTİK NOKTA: Multiline içeriği GITHUB_ENV'e güvenle yazmak
+          # EOF (End of File) delimiter tekniği kullanıyoruz.
+          {
+            echo "DYNAMIC_EXTRA_INSTRUCTIONS<<EOF"
+            echo -e "$ACCUMULATED_RULES"
+            echo "EOF"
+          } >> $GITHUB_ENV
 
       # Botu çalıştır ---
       - name: Create Credentials File
@@ -35,24 +99,11 @@ jobs:
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
+          pr_reviewer_extra_instructions: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
+          # Code Suggestions için de aynısını yapabilirsin:
+          pr_code_suggestions_extra_instructions: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
+
           # --- GITHUB ACTION AUTO SETTINGS ---
-          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
+          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
-
-          PR_REVIEWER.SYSTEM_PROMPT: |
-            If PR description contains Turkish keywords (düzelt, güncelle, ekle, hata):
-            → Respond in Turkish
-
-            If English keywords (fix, update, add, bug):
-            → Respond in English
-
-            ALWAYS keep technical terms in English:
-            - useEffect, async/await, XSS, SQL injection, dangerouslySetInnerHTML
-
-            Example Turkish response:
-            ## 🔴 KRİTİK Sorunlar
-            ### 1. Güvenlik: XSS Açığı
-            **Sorun:** dangerouslySetInnerHTML sanitizasyon olmadan kullanılmış
-            **Risk:** Saldırgan zararlı kod enjekte edebilir
-            
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
