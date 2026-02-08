@@ -1,3 +1,35 @@
+[config]
+model = "vertex_ai/gemini-2.0-flash"
+model_turbo = "vertex_ai/gemini-2.0-flash"
+fallback_models = []
+custom_model_max_tokens = 50000
+ignore_file_extensions = [".json", ".md", ".css", ".lock", ".svg"]
+publish_output = true
+enable_custom_labels = true
+
+[pr_code_suggestions]
+num_code_suggestions = 5
+
+[pr_description]
+enable_custom_labels = true
+use_description_markers = false
+add_original_user_description = true
+
+[pr_reviewer]
+num_code_suggestions = 10
+inline_code_comments = true
+persistent_comment = true
+minimal_severity = "Medium"
+require_security_review = true
+require_score_review = false
+require_tests_review = false
+require_estimate_effort_to_review = true
+require_can_be_split_review = false
+enable_review_labels_effort = true
+enable_review_labels_security = false
+enable_auto_approval = false
+
+
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
