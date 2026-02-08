@@ -20,6 +20,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: ⚙️ Prepare Rules
+        uses: ./.github/actions/prepare-rules
 
       # Botu çalıştır ---
       - name: Create Credentials File
@@ -40,3 +42,9 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
           CONFIG__MODEL_TEMPERATURE: "0.2"
+
+      - name: 🎨 Customize Title
+        if: always() # Hata olsa bile çalış
+        uses: ./.github/actions/customize-title
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
