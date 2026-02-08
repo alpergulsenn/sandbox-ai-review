@@ -37,7 +37,8 @@ jobs:
             csharp:
               - '**/*.cs'
               - '**/*.csproj'
-                2. Adım: MD Dosyalarından Kuralları Okuyup Değişkeni Hazırla
+
+        #2. Adım: MD Dosyalarından Kuralları Okuyup Değişkeni Hazırla
       - name: Construct Dynamic Rules from Files
         id: rule_builder
         run: |
