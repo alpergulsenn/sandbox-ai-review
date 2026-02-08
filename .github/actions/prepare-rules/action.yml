@@ -1,0 +1,76 @@
+name: "Prepare Corporate Rules"
+description: "Detects changed files and injects specific architectural rules"
+outputs:
+  has_changes:
+    description: "Was any relevant change detected?"
+    value: ${{ steps.changes.outputs.src }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    # 1. Değişiklikleri Tespit Et (TJ Actions buraya taşındı)
+    - name: Detect Changes
+      id: changes
+      uses: tj-actions/changed-files@v44
+      with:
+        files_yaml: |
+          java:
+            - '**/*.java'
+            - '**/*.jar'
+            - 'pom.xml'
+          js:
+            - '**/*.js'
+            - '**/*.ts'
+            - 'package.json'
+          csharp:
+            - '**/*.cs'
+            - '**/*.csproj'
+
+    # 2. Kuralları Birleştir (Logic buraya taşındı)
+    - name: Construct Dynamic Rules
+      shell: bash # Composite action'da shell belirtmek zorunludur
+      run: |
+        echo "### 🛡️ Active Security & Architecture Protocols" > active_rules.md
+        echo "*(Auto-injected via Modular Workflow)*" >> active_rules.md
+        echo "" >> active_rules.md
+
+        # C# Logic
+        if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
+          echo -e "\n\n" >> active_rules.md
+          cat .github/pr_rules/csharp_rules.md >> active_rules.md
+        fi
+
+        # Java Logic
+        if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
+          echo -e "\n\n" >> active_rules.md
+          cat .github/pr_rules/java_rules.md >> active_rules.md
+        fi
+
+        # JS Logic
+        if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
+          echo -e "\n\n" >> active_rules.md
+          cat .github/pr_rules/js_rules.md >> active_rules.md
+        fi
+
+        # Environment Variable Injection
+        {
+          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<EOF"
+          cat active_rules.md
+          echo "EOF"
+        } >> $GITHUB_ENV
+
+        {
+          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
+          cat active_rules.md
+          echo "EOF"
+        } >> $GITHUB_ENV
+
+    - name: Debug Rules
+      shell: bash
+      run: |
+        echo "🔍 ENJECTE EDİLEN KURALLAR (RAW VIEW):"
+        cat active_rules.md

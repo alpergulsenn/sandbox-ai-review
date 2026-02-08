@@ -1,4 +1,4 @@
-name: AI Code Review
+name: PR Agent Workflow
 
 on:
   pull_request:
@@ -20,67 +20,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      # 1. adım - Değişen dosyaların dilini tespit et
-      - name: Detect Changes
-        id: changes
-        uses: tj-actions/changed-files@v44
-        with:
-          files_yaml: |
-            java:
-              - '**/*.java'
-              - '**/*.jar'
-            js:
-              - '**/*.js'
-              - '**/*.ts'
-              - '**/*.jsx'
-            csharp:
-              - '**/*.cs'
-              - '**/*.csproj'
-
-        #2. Adım: MD Dosyalarından Kuralları Okuyup Değişkeni Hazırla
-      - name: Construct Dynamic Rules from Files
-        id: rule_builder
-        run: |
-          echo "### 🛡️ Active Security & Architecture Protocols" > active_rules.md
-          echo "*(Auto-injected via Workflow)*" >> active_rules.md
-          echo "" >> active_rules.md            
-
-          # C# Logic
-          if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
-            echo -e "\n\n" >> active_rules.md
-            cat .github/pr_rules/csharp_rules.md >> active_rules.md
-          fi
-
-          # Java Logic
-          if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
-            echo -e "\n\n" >> active_rules.md
-            cat .github/pr_rules/java_rules.md >> active_rules.md
-          fi
-
-          # JS/TS Logic
-          if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
-            echo -e "\n\n" >> active_rules.md
-            cat .github/pr_rules/js_rules.md >> active_rules.md
-          fi
-
-          {
-            echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<EOF"
-            cat active_rules.md
-            echo "EOF"
-          } >> $GITHUB_ENV
-
-          {
-            echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
-            cat active_rules.md
-            echo "EOF"
-          } >> $GITHUB_ENV
-
-      # 3. Adım: Debugging (Artık backtick hatası görmemelisin)
-      - name: Debug Rules
-        run: |
-          echo "🔍 ENJECTE EDİLEN KURALLAR (RAW VIEW):"
-          cat active_rules.md
 
       # Botu çalıştır ---
       - name: Create Credentials File
