@@ -20,8 +20,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: ⚙️ Prepare Rules
+
+      - name: Prepare Rules
         uses: ./.github/actions/prepare-rules
+
+        # 3. ADIM: DEBUG (Kuralların yüklenip yüklenmediğini kontrol et)
+      - name: Debug Environment Variables
+        run: |
+          echo "Checking injected variables..."
+          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS: $PR_REVIEWER__EXTRA_INSTRUCTIONS"
 
       # Botu çalıştır ---
       - name: Create Credentials File
@@ -43,7 +50,7 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
           CONFIG__MODEL_TEMPERATURE: "0.2"
 
-      - name: 🎨 Customize Title
+      - name: Customize Title
         if: always() # Hata olsa bile çalış
         uses: ./.github/actions/customize-title
         with:
