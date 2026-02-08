@@ -7,7 +7,6 @@ ignore_file_extensions = [".json", ".md", ".css", ".lock", ".svg"]
 publish_output = true
 enable_custom_labels = true
 
-
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"

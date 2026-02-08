@@ -86,6 +86,12 @@ jobs:
             echo "EOF"
           } >> $GITHUB_ENV
 
+      # 3. Adım: Debugging (Modelin ne göreceğini loglara basıyoruz)
+      - name: Debug Rules
+        run: |
+          echo "🔍 ENJECTE EDİLECEK KURALLAR:"
+          echo "${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}"
+
       # Botu çalıştır ---
       - name: Create Credentials File
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
@@ -100,9 +106,8 @@ jobs:
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
-          pr_reviewer_extra_instructions: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
-          # Code Suggestions için de aynısını yapabilirsin:
-          pr_code_suggestions_extra_instructions: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
+          PRREVIEWER_EXTRA_INSTRUCTIONS: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
+          PR_CODE_SUGGESTIONS_EXTRA_INSTRUCTIONS: ${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}
 
           # --- GITHUB ACTION AUTO SETTINGS ---
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
