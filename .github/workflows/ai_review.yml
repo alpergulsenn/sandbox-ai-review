@@ -42,55 +42,41 @@ jobs:
       - name: Construct Dynamic Rules from Files
         id: rule_builder
         run: |
-          ACCUMULATED_RULES=""
-
-          # ---------------- JAVA LOGIC ----------------
-          if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
-            echo "Java changes detected. Loading java_rules.md..."
+          # 1. Önce geçici bir "rules.txt" dosyası oluşturuyoruz.
+          # Bu dosya bizim güvenli tampon bölgemiz.
+            echo "Context: Corporate Architectural Review Mode Active" > final_rules.txt
             
-            # Dosya içeriğini değişkene atıyoruz
-            JAVA_CONTENT=$(cat .github/pr_rules/java_rules.md)
-            
-            # Ana kural setine ekliyoruz (Başlık ekleyerek)
-            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### JAVA ARCHITECTURE STANDARDS:\n${JAVA_CONTENT}"
-          fi
+            # ---------------- C# LOGIC ----------------
+            if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
+              echo -e "\n\n" >> final_rules.txt
+              # cat komutu içeriği yorumlamadan direkt sona ekler (APPEND)
+              cat .github/pr_rules/csharp_rules.md >> final_rules.txt
+            fi
 
-          # ---------------- JS/TS LOGIC ----------------
-          if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
-            echo "JS changes detected. Loading js_rules.md..."
-            
-            JS_CONTENT=$(cat .github/pr_rules/js_rules.md)
-            
-            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### JAVASCRIPT/TS GUIDELINES:\n${JS_CONTENT}"
-          fi
+            # ---------------- JAVA LOGIC ----------------
+            if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
+              echo -e "\n\n" >> final_rules.txt
+              cat .github/pr_rules/java_rules.md >> final_rules.txt
+            fi
 
-          # ---------------- C# LOGIC ----------------
-          if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
-            echo "C# changes detected. Loading csharp_rules.md..."
+            # ---------------- JS/TS LOGIC ----------------
+            if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
+              echo -e "\n\n" >> final_rules.txt
+              cat .github/pr_rules/js_rules.md >> final_rules.txt
+            fi
+
+            # 2. Şimdi bu temiz dosyayı GitHub ENV'ye aktarıyoruz.
+            # "EOF" bloğu sayesinde ters tırnaklar sorun çıkarmaz.
             
-            CS_CONTENT=$(cat .github/pr_rules/csharp_rules.md)
-            
-            ACCUMULATED_RULES="${ACCUMULATED_RULES}\n\n### C# CORPORATE RULES:\n${CS_CONTENT}"
-          fi
+            echo "DYNAMIC_EXTRA_INSTRUCTIONS<<EOF" >> $GITHUB_ENV
+            cat final_rules.txt >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
 
-          # Eğer hiç kural yüklenmediyse default bir mesaj koyabiliriz (Opsiyonel)
-          if [[ -z "$ACCUMULATED_RULES" ]]; then
-            ACCUMULATED_RULES="Apply standard Clean Code principles."
-          fi
-
-          # KRİTİK NOKTA: Multiline içeriği GITHUB_ENV'e güvenle yazmak
-          # EOF (End of File) delimiter tekniği kullanıyoruz.
-          {
-            echo "DYNAMIC_EXTRA_INSTRUCTIONS<<EOF"
-            echo -e "$ACCUMULATED_RULES"
-            echo "EOF"
-          } >> $GITHUB_ENV
-
-      # 3. Adım: Debugging (Modelin ne göreceğini loglara basıyoruz)
+      # 3. Adım: Debugging (Artık backtick hatası görmemelisin)
       - name: Debug Rules
         run: |
-          echo "🔍 ENJECTE EDİLECEK KURALLAR:"
-          echo "${{ env.DYNAMIC_EXTRA_INSTRUCTIONS }}"
+          echo "🔍 ENJECTE EDİLEN KURALLAR (RAW VIEW):"
+          cat final_rules.txt
 
       # Botu çalıştır ---
       - name: Create Credentials File
