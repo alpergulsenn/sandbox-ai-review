@@ -24,6 +24,7 @@ runs:
             - 'pom.xml'
           js:
             - '**/*.js'
+            - '**/*.jsx'
             - '**/*.ts'
             - 'package.json'
           csharp:
