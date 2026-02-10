@@ -21,22 +21,36 @@ runs:
             issue_number: number,
           });
 
-          const targetComment = comments.data.find(c => 
-            c.body.includes('PR Reviewer Guide') && 
+          const targetComment = comments.data.find(c =>
+            c.body.includes('PR Reviewer Guide') &&
             c.user.type === 'Bot'
           );
 
           if (targetComment) {
             console.log(`Found PR Agent comment ID: ${targetComment.id}`);
-            const newBody = targetComment.body.replace(
-              /## PR Reviewer Guide .*/, 
+
+            let newBody = targetComment.body;
+
+            //Reviewer Guide başlığını değiştir
+            newBody = newBody.replace(
+              /## PR Reviewer Guide[^\n]*/g,
               '## 🎩 Review of Abralabs PR Agent'
             );
 
-            await github.rest.issues.updateComment({
-              owner,
-              repo,
-              comment_id: targetComment.id,
-              body: newBody
-            });
+            //Code Suggestions başlığını değiştir
+            newBody = newBody.replace(
+              /## PR Code Suggestions[^\n]*/g,
+              '## ✨ Suggestions of Abralabs PR Agent'
+            );
+
+            if (newBody !== targetComment.body) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: targetComment.id,
+                body: newBody
+              });
+            } else {
+              console.log('No matching headers found to update.');
+            }
           }
