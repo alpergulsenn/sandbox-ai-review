@@ -1,0 +1,41 @@
+image: python:3.10
+
+pipelines:
+  pull-requests:
+    "**": # Tüm branchler için çalışır
+      - step:
+          name: 🛡️ Abralabs Guard & PR Agent
+          services:
+            - docker
+          script:
+            # 1. Değişiklikleri Tespit Et ve Kuralları Birleştir (BASH MAGIC)
+            - echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md
+
+            # C# Kontrolü (Bitbucket'ta changed files listesi almak için git diff kullanılır)
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/csharp_rules.md >> active_rules.md
+                echo "C# Rules Injected!"
+              fi
+
+            # (Diğer diller için aynı if bloklarını ekleyebilirsin)
+
+            # 2. Kuralları Değişkene Ata
+            - export PR_REVIEWER__EXTRA_INSTRUCTIONS="$(cat active_rules.md)"
+            - export PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$(cat active_rules.md)"
+
+            # 3. PR Agent'ı Docker Üzerinden Çalıştır
+            # Not: Bitbucket'ta tablo modu yoktur, yorum modu zorunludur.
+            - docker run --rm \
+              -e OPENAI_KEY=$OPENAI_KEY \
+              -e CONFIG__GIT_PROVIDER="bitbucket" \
+              -e BITBUCKET_SERVER__URL="https://bitbucket.org" \
+              -e BITBUCKET__BEARER_TOKEN=$BITBUCKET_APP_PASSWORD \
+              -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$PR_REVIEWER__EXTRA_INSTRUCTIONS" \
+              -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS" \
+              -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+              -e PR_CODE_SUGGESTIONS__SUGGESTIONS_SCORE_THRESHOLD="7" \
+              codiumai/pr-agent:latest \
+              --pr_url=https://bitbucket.org/$BITBUCKET_REPO_OWNER/$BITBUCKET_REPO_SLUG/pull-requests/$BITBUCKET_PR_ID \
+              review
