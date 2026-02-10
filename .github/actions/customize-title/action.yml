@@ -39,7 +39,7 @@ runs:
 
             //Code Suggestions başlığını değiştir
             newBody = newBody.replace(
-              /## PR Code Suggestions[^\n]*/g,
+              /## PR Code Suggestions ✨[^\n]*/g,
               '## ✨ Suggestions of Abralabs PR Agent'
             );
 
