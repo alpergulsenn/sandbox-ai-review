@@ -47,7 +47,7 @@ runs:
 
         # Java Logic
         if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
-          echo -e "\n\n" >> active_rules.md
+          echo "" >> active_rules.md
           cat .github/pr_rules/java_rules.md >> active_rules.md
         fi
 
