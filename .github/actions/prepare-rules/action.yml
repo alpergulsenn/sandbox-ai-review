@@ -65,11 +65,13 @@ runs:
         # PR_REVIEWER için kuralları env'e yaz
         echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
         cat active_rules.md >> $GITHUB_ENV
+        echo "" >> $GITHUB_ENV 
         echo "$DELIMITER" >> $GITHUB_ENV
 
         # PR_CODE_SUGGESTIONS için kuralları env'e yaz
         echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
         cat active_rules.md >> $GITHUB_ENV
+        echo "" >> $GITHUB_ENV 
         echo "$DELIMITER" >> $GITHUB_ENV
 
     - name: Debug Rules
