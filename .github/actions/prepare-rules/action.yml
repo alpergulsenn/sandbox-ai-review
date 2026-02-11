@@ -59,13 +59,13 @@ runs:
 
         # Environment Variable Injection
         {
-          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<'ABRALABS_LIMITER'"
+          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<ABRALABS_LIMITER"
           cat active_rules.md
           echo "ABRALABS_LIMITER"
         } >> $GITHUB_ENV
 
         {
-          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<'ABRALABS_LIMITER'"
+          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<ABRALABS_LIMITER"
           cat active_rules.md
           echo "ABRALABS_LIMITER"
         } >> $GITHUB_ENV
