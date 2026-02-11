@@ -49,6 +49,8 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
           CONFIG__MODEL_TEMPERATURE: "0.2"
+          CONFIG__VERBOSITY_LEVEL: "2"
+          GLOBAL__LOG_LEVEL: "DEBUG"
 
       - name: Customize Title
         if: always() # Hata olsa bile çalış
