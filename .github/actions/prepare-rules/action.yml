@@ -47,7 +47,7 @@ runs:
 
         # Java Logic
         if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
-          echo "" >> active_rules.md
+          echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/java_rules.md >> active_rules.md
         fi
 
@@ -59,15 +59,15 @@ runs:
 
         # Environment Variable Injection
         {
-          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<ABRALABS_LIMITER"
+          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<EOF"
           cat active_rules.md
-          echo "ABRALABS_LIMITER"
+          echo "EOF"
         } >> $GITHUB_ENV
 
         {
-          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<ABRALABS_LIMITER"
+          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
           cat active_rules.md
-          echo "ABRALABS_LIMITER"
+          echo "EOF"
         } >> $GITHUB_ENV
 
     - name: Debug Rules
