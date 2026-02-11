@@ -253,19 +253,16 @@ public class LoginController {
 **Expected Output (YAML Format):**
 ```yaml
 - relevant_file: "LoginController.java"
-  severity: "CRITICAL"
   issue_header: "[SECURITY] SQL Injection Risk"
   issue_content: "Raw string concatenation in SQL detected. Use PreparedStatement with '?' placeholders to prevent SQL injection attacks."
   fix_suggestion: "PreparedStatement ps = conn.prepareStatement(\"SELECT * FROM users WHERE username = ? AND password = ?\"); ps.setString(1, username); ps.setString(2, password);"
 
 - relevant_file: "LoginController.java"
-  severity: "CRITICAL"
   issue_header: "[CRITICAL-ERROR] Resource Leak"
   issue_content: "Connection not properly closed. Use try-with-resources to ensure cleanup even on exceptions."
   fix_suggestion: "try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) { ... }"
 
 - relevant_file: "LoginController.java"
-  severity: "MEDIUM"
   issue_header: "[ARCHITECTURE] Exception Swallowing"
   issue_content: "Empty catch block detected. Always log exceptions for debugging production issues."
   fix_suggestion: "catch (Exception e) { logger.error(\"Login failed for user: {}\", username, e); }"
@@ -294,18 +291,6 @@ public class LoginController {
 **24. Cartesian Product**
 **Trigger:** Multiple JOIN FETCH on collections in same query.
 **Output:** `[PERFORMANCE] Multiple Collection Fetch - Use separate queries or @EntityGraph to avoid Cartesian product.`
-
----
-
-## 📊 PRIORITY MATRIX
-
-| Priority  | Security | Performance | Architecture | Quality |
-|-----------|----------|-------------|--------------|---------|
-| CRITICAL  | SQL Injection, Deserialization, Path Traversal | Resource Leaks | Thread Safety | - |
-| HIGH      | PII Leakage, Weak Crypto | N+1 Query | Layer Violation | Missing Tests |
-| MEDIUM    | Hardcoded Secrets | String Concatenation, Session Bloat | DI Violation | Exception Swallowing |
-| LOW       | - | Inefficient Collections | Legacy Date API | Magic Numbers |
-| INFO      | - | - | - | Dead Code |
 
 ---
 
