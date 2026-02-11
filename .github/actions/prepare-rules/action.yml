@@ -31,21 +31,18 @@ runs:
             - '**/*.cs'
             - '**/*.csproj'
 
-    - name: Construct Dynamic Rules
+    - name: Construct Dynamic Rules (Safe Mode)
       shell: bash
       run: |
-        # 1. Dosyayı Oluşturma (Aynı mantık)
-        echo "### 🛡️ Active Security & Architecture Protocols" > active_rules.md
-        echo "*(Auto-injected via Modular Workflow)*" >> active_rules.md
+        # 1. Kuralları Birleştir
+        echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md
         echo "" >> active_rules.md
 
-        # C# Logic
         if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/csharp_rules.md >> active_rules.md
         fi
 
-        # Java Logic
         if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/java_rules.md >> active_rules.md
@@ -57,8 +54,23 @@ runs:
           cat .github/pr_rules/js_rules.md >> active_rules.md
         fi
 
-        RULES_CONTENT=$(base64 -w 0 active_rules.md)
-        echo "PR_RULES_BASE64=$RULES_CONTENT" >> $GITHUB_ENV
+        # -----------------------------------------------------------------
+        # GÜVENLİ ENJEKSİYON (RANDOM DELIMITER)
+        # -----------------------------------------------------------------
+        # Rastgele bir sınır kelimesi üretiyoruz (Örn: RULE_BLOCK_173849...)
+        # Bu sayede kodun içinde "EOF" geçse bile script patlamaz.
+
+        DELIMITER="RULE_BLOCK_$(date +%s)"
+
+        # PR_REVIEWER için kuralları env'e yaz
+        echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
+        cat active_rules.md >> $GITHUB_ENV
+        echo "$DELIMITER" >> $GITHUB_ENV
+
+        # PR_CODE_SUGGESTIONS için kuralları env'e yaz
+        echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
+        cat active_rules.md >> $GITHUB_ENV
+        echo "$DELIMITER" >> $GITHUB_ENV
 
     - name: Debug Rules
       shell: bash
