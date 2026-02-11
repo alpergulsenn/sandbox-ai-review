@@ -65,9 +65,9 @@ runs:
         } >> $GITHUB_ENV
 
         {
-          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
+          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<'ABRALABS_LIMITER'"
           cat active_rules.md
-          echo "EOF"
+          echo "ABRALABS_LIMITER"
         } >> $GITHUB_ENV
 
     - name: Debug Rules
