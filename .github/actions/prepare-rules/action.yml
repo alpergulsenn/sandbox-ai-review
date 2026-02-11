@@ -31,10 +31,10 @@ runs:
             - '**/*.cs'
             - '**/*.csproj'
 
-    # 2. Kuralları Birleştir (Logic buraya taşındı)
     - name: Construct Dynamic Rules
-      shell: bash # Composite action'da shell belirtmek zorunludur
+      shell: bash
       run: |
+        # 1. Dosyayı Oluşturma (Aynı mantık)
         echo "### 🛡️ Active Security & Architecture Protocols" > active_rules.md
         echo "*(Auto-injected via Modular Workflow)*" >> active_rules.md
         echo "" >> active_rules.md
@@ -57,18 +57,8 @@ runs:
           cat .github/pr_rules/js_rules.md >> active_rules.md
         fi
 
-        # Environment Variable Injection
-        {
-          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<EOF"
-          cat active_rules.md
-          echo "EOF"
-        } >> $GITHUB_ENV
-
-        {
-          echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<EOF"
-          cat active_rules.md
-          echo "EOF"
-        } >> $GITHUB_ENV
+        RULES_CONTENT=$(base64 -w 0 active_rules.md)
+        echo "PR_RULES_BASE64=$RULES_CONTENT" >> $GITHUB_ENV
 
     - name: Debug Rules
       shell: bash

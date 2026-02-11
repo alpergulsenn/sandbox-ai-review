@@ -52,6 +52,9 @@ jobs:
           CONFIG__VERBOSITY_LEVEL: "2"
           GLOBAL__LOG_LEVEL: "DEBUG"
 
+          PR_REVIEWER__EXTRA_INSTRUCTIONS: $(echo ${{ env.PR_RULES_BASE64 }} | base64 -d)
+          PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS: $(echo ${{ env.PR_RULES_BASE64 }} | base64 -d)
+
       - name: Customize Title
         if: always() # Hata olsa bile çalış
         uses: ./.github/actions/customize-title
