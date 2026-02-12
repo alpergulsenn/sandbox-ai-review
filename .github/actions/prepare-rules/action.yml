@@ -38,6 +38,9 @@ runs:
         echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md
         echo "" >> active_rules.md
 
+        cat .github/pr_rules/architecture_scanner.md >> active_rules.md
+        echo "" >> active_rules.md
+
         if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/csharp_rules.md >> active_rules.md
