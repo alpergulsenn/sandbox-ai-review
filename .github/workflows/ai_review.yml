@@ -48,10 +48,10 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
-          CONFIG__MODEL_TEMPERATURE: "0.6"
           CONFIG__VERBOSITY_LEVEL: "2"
-          CONFIG__TOP_P: "0.9" # Nucleus sampling (opsiyonel)
           GLOBAL__LOG_LEVEL: "INFO"
+          #CONFIG__MODEL_TEMPERATURE: "0.6"
+          #CONFIG__TOP_P: "0.9" # Nucleus sampling (opsiyonel)
 
       - name: Customize Title
         if: always() # Hata olsa bile çalış
