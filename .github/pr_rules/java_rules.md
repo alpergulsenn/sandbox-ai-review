@@ -260,6 +260,45 @@ public class LoginController {
 
 ---
 
+### ✅ CORRECT BEHAVIOR EXAMPLES
+
+**Example 1: Clean Code (No Issues)**
+````java
+@RequiredArgsConstructor
+public class OrderService {
+    private final OrderRepository repository;
+    
+    public Order getOrder(Long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new NotFoundException(id));
+    }
+}
+````
+
+**AI Response:**
+````yaml
+pr_summary:
+  total_issues: 0
+  can_merge: true
+
+praise:
+  - "Excellent dependency injection with @RequiredArgsConstructor"
+  - "Proper Optional handling"
+
+issues: []
+````
+
+**NOT:**
+````
+Suggestions:
+- Consider using interfaces for repository
+- Add more JavaDoc
+- Make constants configurable
+````
+
+---
+
+
 ## 🎯 FRAMEWORK-SPECIFIC RULES
 
 ### Spring Boot Specific:
