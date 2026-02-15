@@ -38,6 +38,10 @@ runs:
         echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md
         echo "" >> active_rules.md
 
+        # System Override & Output Format
+        cat .github/pr_rules/system_override.md >> active_rules.md
+        echo "" >> active_rules.md
+
         cat .github/pr_rules/architecture_scanner.md >> active_rules.md
         echo "" >> active_rules.md
 

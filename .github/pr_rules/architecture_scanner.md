@@ -20,3 +20,26 @@ If you find a violation of the *inferred* architecture, use this format:
 ---
 **Proof of Analysis:**
 You are REQUIRED to identify the architecture. If the violation is strictly architectural, verify that the file location (e.g., `/Controllers/`) contradicts the logic (e.g., `DbContext.Save()`).
+
+---
+
+## 🚨 OUTPUT FORMAT FOR ARCHITECTURE VIOLATIONS
+
+Architecture violations MUST follow the same YAML format:
+```yaml
+relevant_file: "UserController.cs"
+severity: "HIGH"
+category: "Architecture"
+issue_header: "[ARCHITECTURE] MVC Layer Violation"
+issue_content: "Detected Architecture: MVC. Controller directly accessing DbContext breaks MVC separation of concerns."
+detected_pattern: "MVC"
+violated_constraint: "Controllers must not access data layer directly"
+line_number: 23
+code_snippet: |
+var user = _context.Users.Find(id);
+fix_suggestion: |
+Inject IUserService and call:
+var user = await _userService.GetByIdAsync(id);
+business_impact: "Tight coupling, untestable code, harder to maintain" 
+```
+**NO EXCEPTIONS - Even architecture analysis must be valid YAML.**

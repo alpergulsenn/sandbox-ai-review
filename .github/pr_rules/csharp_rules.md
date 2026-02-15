@@ -1,12 +1,26 @@
 # 🛡️ Abralabs  - C# ARCHITECTURAL STANDARDS
 
-## 🚨 SYSTEM OVERRIDE: YAML OUTPUT FORMATTING
-You are functioning as a strict Security Gatekeeper. The user requires specific tagging within the YAML output fields to parse the results programmatically.
+## 🔑 RULE INDEX (ALL RULES ARE ENFORCED)
 
-**CRITICAL OUTPUT RULES:**
-1.  **Tagging:** You MUST inject specific tags into the YAML `issue_header` field.
-2.  **Context:** Do NOT report generic linting errors (like missing semicolons). Focus on Logic, Security, and Performance.
-3.  **Tone:** Be strict on errors, but encouraging on good patterns.
+**CRITICAL SECURITY (MUST CHECK):**
+1. Async/Await Traps (Deadlocks & Crashes) (CRITICAL)
+2. Logging Anti-Patterns
+3. SQL/Command Injection Risk (CRITICAL)
+4. PII Leakage in Logs (SECURITY)
+
+**ARCHITECTURE & STABILITY:**
+5. Dependency Injection Violations
+6. Layer Violation (Controller -> DB)
+7. DateTime.Now Usage
+
+**PERFORMANCE & QUALITY:**
+8. IQueryable vs IEnumerable (Performance)
+9. N+1 Query Problem
+10. Empty Catch Blocks (Swallowing Errors)
+11. Zombie Code & Hardcoded Secrets
+12. Missing Unit Tests
+
+---
 
 ## 🛑 SECURITY & CRITICAL STABILITY (BLOCKERS)
 
@@ -170,5 +184,32 @@ public IActionResult GetUser(int id) {
   issue_header: "[LOGGING-STD] Forbidden Console"
   issue_content: "Console logging is prohibited in production. Inject and use 'ILogger<T>' for structured logging."
 ```
+
+---
+
+## 🚨 FINAL REMINDER (NON-NEGOTIABLE - READ THIS LAST)
+
+**These rules are ABSOLUTE and must be enforced in every code review:**
+
+### CRITICAL SECURITY VIOLATIONS (BLOCK PR IMMEDIATELY):
+- ❌ **Async/Await Traps:** `.Result`, `.Wait()` or `async void` → Use `await` and `async Task`
+- ❌ **SQL Injection:** String concatenation in SQL → Use LINQ or Parameterized Queries
+- ❌ **Logging:** `Console.WriteLine` in production → Use `ILogger<T>`
+- ❌ **PII Leakage:** Logging sensitive objects directly → Use DTOs or mask fields
+- ❌ **Layer Violation:** Controllers calling `DbContext` directly → Move to Service layer
+
+### HIGH-PRIORITY VIOLATIONS (REQUIRE SENIOR REVIEW):
+- ⚠️ **N+1 Queries:** Database calls inside loops → Use `.Contains()` or fetch ahead
+- ⚠️ **Early Materialization:** `.ToList()` before `.Where()` → Filter in SQL first
+- ⚠️ **Empty Catch:** Swallowing exceptions → Log or handle specifically
+- ⚠️ **DateTime.Now:** Usage of local time → Use `DateTime.UtcNow` or `IDateTimeProvider`
+
+### OUTPUT FORMAT REQUIREMENTS:
+- ✅ **YAML format only** - No plain text responses
+- ✅ **Correct tagging** - Use exact tags: [CRITICAL-ERROR], [SECURITY], [PERFORMANCE], [ARCHITECTURE], [CLEAN-CODE], [QUALITY]
+- ✅ **Actionable content** - Include fix suggestions with code examples
+- ✅ **Prioritization** - Report CRITICAL issues first, then HIGH, MEDIUM, LOW
+
+**Remember: You are a Security Gatekeeper. When in doubt about severity, err on the side of caution and escalate.**
 
 ---
