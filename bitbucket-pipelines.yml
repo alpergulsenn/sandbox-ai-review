@@ -1,0 +1,337 @@
+image: atlassian/default-image:4
+
+pipelines:
+  pull-requests:
+    "**":
+      - step:
+          name: 🛡️ Abralabs AI Code Review & Guard
+          services:
+            - docker
+          script:
+            - 'echo "### 🛡️ System Override & Output Format" > active_rules.md'
+            - 'cat .bitbucket/pr_rules/system_override.md >> active_rules.md || echo "Warning: system_override.md not found"'
+
+            # C# Rules
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/csharp_rules.md >> active_rules.md || echo "Warning: csharp_rules.md not found"
+                echo "C# Rules Injected!"
+              fi
+
+            # Java Rules
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.java$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/java_rules.md >> active_rules.md || echo "Warning: java_rules.md not found"
+                echo "Java Rules Injected!"
+              fi
+
+            # JS/TS Rules
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -qE "\.(js|ts|jsx|tsx)$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/js_rules.md >> active_rules.md || echo "Warning: js_rules.md not found"
+                echo "JS/TS Rules Injected!"
+              fi
+
+            - "export RULES_CONTENT=$(cat active_rules.md)"
+            - "echo $GCP_CREDENTIALS_JSON > gcp_keys.json"
+
+            # PR ID Handling (Auto or Manual)
+            - "export PR_ID=${PR_ID:-$BITBUCKET_PR_ID}"
+            - |
+              if [ -z "$PR_ID" ]; then
+                echo "❌ Error: PR_ID is missing. If running manually, please provide PR_ID variable."
+                exit 1
+              fi
+            - 'export PR_URL="https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pull-requests/${PR_ID}"'
+            - 'echo "🔗 Analyzing PR $PR_URL"'
+
+            # Auth Preparation
+            - |
+              if [ -z "$BITBUCKET_USERNAME" ]; then
+                echo "❌ Error: BITBUCKET_USERNAME variable is missing."
+                exit 1
+              fi
+            - 'export AUTH_STRING="${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}"'
+            - 'export ENCODED_TOKEN=$(echo -n "$AUTH_STRING" | base64 | tr -d "\n")'
+            - 'echo "✅ Auth token generated successfully."'
+
+            # Determine Command
+            - "export PR_AGENT_COMMAND=${PR_AGENT_COMMAND:-review}"
+            - 'echo "🚀 Running PR Agent Command: $PR_AGENT_COMMAND"'
+
+            # Prepare Arguments
+            - 'EXTRA_ARGS=""'
+            - |
+              if [ "$PR_AGENT_COMMAND" = "ask" ]; then
+                 if [ -z "$PR_AGENT_QUESTION" ]; then
+                    echo "❌ Error: PR_AGENT_QUESTION missing"
+                    exit 1
+                 fi
+                 EXTRA_ARGS="\"$PR_AGENT_QUESTION\""
+              fi
+
+            # Docker Run
+            - |
+              docker run --rm \
+                -v $(pwd):/workspace \
+                -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
+                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
+                -e VERTEXAI__LOCATION=$GCP_LOCATION \
+                -e GOOGLE_APPLICATION_CREDENTIALS="/workspace/gcp_keys.json" \
+                -e BITBUCKET__AUTH_TYPE="basic" \
+                -e BITBUCKET__BASIC_TOKEN=$ENCODED_TOKEN \
+                -e CONFIG__GIT_PROVIDER="bitbucket" \
+                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+                codiumai/pr-agent:latest \
+                --pr_url="$PR_URL" \
+                $PR_AGENT_COMMAND $EXTRA_ARGS
+
+  custom:
+    pr-agent-improve:
+      - variables:
+          - name: PR_ID
+            default: ""
+      - step:
+          name: 🛠️ PR Agent Improve
+          services:
+            - docker
+          script:
+            - 'export PR_AGENT_COMMAND="improve"'
+            # --- START COPY ---
+            - 'echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md'
+            - 'cat .bitbucket/pr_rules/architecture.md >> active_rules.md || echo "Warning: architecture.md not found"'
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/csharp_rules.md >> active_rules.md || echo "Warning: csharp_rules.md not found"
+                echo "C# Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.java$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/java_rules.md >> active_rules.md || echo "Warning: java_rules.md not found"
+                echo "Java Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -qE "\.(js|ts|jsx|tsx)$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/js_rules.md >> active_rules.md || echo "Warning: js_rules.md not found"
+                echo "JS/TS Rules Injected!"
+              fi
+            - "export RULES_CONTENT=$(cat active_rules.md)"
+            - "echo $GCP_CREDENTIALS_JSON > gcp_keys.json"
+            - "export PR_ID=${PR_ID:-$BITBUCKET_PR_ID}"
+            - |
+              if [ -z "$PR_ID" ]; then
+                echo "❌ Error: PR_ID is missing. If running manually, please provide PR_ID variable."
+                exit 1
+              fi
+            - 'export PR_URL="https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pull-requests/${PR_ID}"'
+            - 'echo "🔗 Analyzing PR $PR_URL"'
+            - |
+              if [ -z "$BITBUCKET_USERNAME" ]; then
+                echo "❌ Error: BITBUCKET_USERNAME variable is missing."
+                exit 1
+              fi
+            - 'export AUTH_STRING="${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}"'
+            - 'export ENCODED_TOKEN=$(echo -n "$AUTH_STRING" | base64 | tr -d "\n")'
+            - 'echo "✅ Auth token generated successfully."'
+            - 'echo "🚀 Running PR Agent Command: $PR_AGENT_COMMAND"'
+            - 'EXTRA_ARGS=""'
+            - |
+              if [ "$PR_AGENT_COMMAND" = "ask" ]; then
+                 if [ -z "$PR_AGENT_QUESTION" ]; then
+                    echo "❌ Error: PR_AGENT_QUESTION missing"
+                    exit 1
+                 fi
+                 EXTRA_ARGS="\"$PR_AGENT_QUESTION\""
+              fi
+            - |
+              docker run --rm \
+                -v $(pwd):/workspace \
+                -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
+                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
+                -e VERTEXAI__LOCATION=$GCP_LOCATION \
+                -e GOOGLE_APPLICATION_CREDENTIALS="/workspace/gcp_keys.json" \
+                -e BITBUCKET__AUTH_TYPE="basic" \
+                -e BITBUCKET__BASIC_TOKEN=$ENCODED_TOKEN \
+                -e CONFIG__GIT_PROVIDER="bitbucket" \
+                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+                codiumai/pr-agent:latest \
+                --pr_url="$PR_URL" \
+                $PR_AGENT_COMMAND $EXTRA_ARGS
+            # --- END COPY ---
+
+    pr-agent-describe:
+      - variables:
+          - name: PR_ID
+            default: ""
+      - step:
+          name: 📝 PR Agent Describe
+          services:
+            - docker
+          script:
+            - 'export PR_AGENT_COMMAND="describe"'
+            # --- START COPY ---
+            - 'echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md'
+            - 'cat .bitbucket/pr_rules/architecture.md >> active_rules.md || echo "Warning: architecture.md not found"'
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/csharp_rules.md >> active_rules.md || echo "Warning: csharp_rules.md not found"
+                echo "C# Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.java$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/java_rules.md >> active_rules.md || echo "Warning: java_rules.md not found"
+                echo "Java Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -qE "\.(js|ts|jsx|tsx)$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/js_rules.md >> active_rules.md || echo "Warning: js_rules.md not found"
+                echo "JS/TS Rules Injected!"
+              fi
+            - "export RULES_CONTENT=$(cat active_rules.md)"
+            - "echo $GCP_CREDENTIALS_JSON > gcp_keys.json"
+            - "export PR_ID=${PR_ID:-$BITBUCKET_PR_ID}"
+            - |
+              if [ -z "$PR_ID" ]; then
+                echo "❌ Error: PR_ID is missing. If running manually, please provide PR_ID variable."
+                exit 1
+              fi
+            - 'export PR_URL="https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pull-requests/${PR_ID}"'
+            - 'echo "🔗 Analyzing PR $PR_URL"'
+            - |
+              if [ -z "$BITBUCKET_USERNAME" ]; then
+                echo "❌ Error: BITBUCKET_USERNAME variable is missing."
+                exit 1
+              fi
+            - 'export AUTH_STRING="${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}"'
+            - 'export ENCODED_TOKEN=$(echo -n "$AUTH_STRING" | base64 | tr -d "\n")'
+            - 'echo "✅ Auth token generated successfully."'
+            - 'echo "🚀 Running PR Agent Command: $PR_AGENT_COMMAND"'
+            - 'EXTRA_ARGS=""'
+            - |
+              if [ "$PR_AGENT_COMMAND" = "ask" ]; then
+                 if [ -z "$PR_AGENT_QUESTION" ]; then
+                    echo "❌ Error: PR_AGENT_QUESTION missing"
+                    exit 1
+                 fi
+                 EXTRA_ARGS="\"$PR_AGENT_QUESTION\""
+              fi
+            - |
+              docker run --rm \
+                -v $(pwd):/workspace \
+                -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
+                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
+                -e VERTEXAI__LOCATION=$GCP_LOCATION \
+                -e GOOGLE_APPLICATION_CREDENTIALS="/workspace/gcp_keys.json" \
+                -e BITBUCKET__AUTH_TYPE="basic" \
+                -e BITBUCKET__BASIC_TOKEN=$ENCODED_TOKEN \
+                -e CONFIG__GIT_PROVIDER="bitbucket" \
+                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+                codiumai/pr-agent:latest \
+                --pr_url="$PR_URL" \
+                $PR_AGENT_COMMAND $EXTRA_ARGS
+            # --- END COPY ---
+
+    pr-agent-ask:
+      - variables:
+          - name: PR_ID
+            default: ""
+          - name: PR_AGENT_QUESTION
+            default: "What is this PR about?"
+      - step:
+          name: ❓ PR Agent Ask
+          services:
+            - docker
+          script:
+            - 'export PR_AGENT_COMMAND="ask"'
+            # --- START COPY ---
+            - 'echo "### 🛡️ Abralabs Architectural Protocols" > active_rules.md'
+            - 'cat .bitbucket/pr_rules/architecture.md >> active_rules.md || echo "Warning: architecture.md not found"'
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/csharp_rules.md >> active_rules.md || echo "Warning: csharp_rules.md not found"
+                echo "C# Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.java$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/java_rules.md >> active_rules.md || echo "Warning: java_rules.md not found"
+                echo "Java Rules Injected!"
+              fi
+            - |
+              if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -qE "\.(js|ts|jsx|tsx)$"; then
+                echo -e "\n\n" >> active_rules.md
+                cat .bitbucket/pr_rules/js_rules.md >> active_rules.md || echo "Warning: js_rules.md not found"
+                echo "JS/TS Rules Injected!"
+              fi
+            - "export RULES_CONTENT=$(cat active_rules.md)"
+            - "echo $GCP_CREDENTIALS_JSON > gcp_keys.json"
+            - "export PR_ID=${PR_ID:-$BITBUCKET_PR_ID}"
+            - |
+              if [ -z "$PR_ID" ]; then
+                echo "❌ Error: PR_ID is missing. If running manually, please provide PR_ID variable."
+                exit 1
+              fi
+            - 'export PR_URL="https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pull-requests/${PR_ID}"'
+            - 'echo "🔗 Analyzing PR $PR_URL"'
+            - |
+              if [ -z "$BITBUCKET_USERNAME" ]; then
+                echo "❌ Error: BITBUCKET_USERNAME variable is missing."
+                exit 1
+              fi
+            - 'export AUTH_STRING="${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}"'
+            - 'export ENCODED_TOKEN=$(echo -n "$AUTH_STRING" | base64 | tr -d "\n")'
+            - 'echo "✅ Auth token generated successfully."'
+            - 'echo "🚀 Running PR Agent Command: $PR_AGENT_COMMAND"'
+            - 'EXTRA_ARGS=""'
+            - |
+              if [ "$PR_AGENT_COMMAND" = "ask" ]; then
+                 if [ -z "$PR_AGENT_QUESTION" ]; then
+                    echo "❌ Error: PR_AGENT_QUESTION missing"
+                    exit 1
+                 fi
+                 EXTRA_ARGS="\"$PR_AGENT_QUESTION\""
+              fi
+            - |
+              docker run --rm \
+                -v $(pwd):/workspace \
+                -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
+                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
+                -e VERTEXAI__LOCATION=$GCP_LOCATION \
+                -e GOOGLE_APPLICATION_CREDENTIALS="/workspace/gcp_keys.json" \
+                -e BITBUCKET__AUTH_TYPE="basic" \
+                -e BITBUCKET__BASIC_TOKEN=$ENCODED_TOKEN \
+                -e CONFIG__GIT_PROVIDER="bitbucket" \
+                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
+                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+                codiumai/pr-agent:latest \
+                --pr_url="$PR_URL" \
+                $PR_AGENT_COMMAND $EXTRA_ARGS
+            # --- END COPY ---
+          variables:
+            - name: PR_AGENT_QUESTION
+              default: "What is this PR about?"
