@@ -6,6 +6,10 @@ custom_model_max_tokens = 50000
 #ignore_file_extensions = [".json", ".md", ".css", ".lock", ".svg"]
 publish_output = true
 enable_custom_labels = true
+temperature = 0.2
+
+[pr_code_suggestions]
+suggestions_score_threshold = 7
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
