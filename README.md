@@ -30,6 +30,7 @@ An automated, context-aware AI agent that evaluates architectural patterns, secu
 <details>
 <summary>Table of Contents</summary>
 <ol>
+<li><a href="#nasil-kurulur">🚀 Nasıl Kurulur (Bitbucket & GitHub)</a></li>
 <li>
 <a href="#about-the-project">About The Project</a>
 <ul>
@@ -50,6 +51,45 @@ An automated, context-aware AI agent that evaluates architectural patterns, secu
 <li><a href="#contact">Contact</a></li>
 </ol>
 </details>
+
+---
+
+## <a id="nasil-kurulur"></a> 🚀 Nasıl Kurulur (Bitbucket & GitHub)
+
+Bu repository, **AI Code Review** sistemini kendi projenize entegre etmeniz için gereken tüm hazır yapılandırmaları içerir. Kurulum için bu repository'deki ilgili dosyaları kendi projenize kopyalamanız yeterlidir.
+
+### 1. Bitbucket Kurulumu
+
+Bitbucket kullanıyorsanız, aşağıdaki dosyaları projenizin ana dizinine kopyalayın:
+
+1.  **Konfigürasyon Dosyaları:**
+    *   `.pr_agent.toml` dosyasını ana dizine kopyalayın.
+    *   `.bitbucket/pr_rules/` klasörünü ve içindeki tüm dosyaları, kendi projenizde de aynı yola (`.bitbucket/pr_rules/`) olacak şekilde kopyalayın.
+    *   `bitbucket-pipelines.yml` dosyasını ana dizine kopyalayın.
+
+2.  **Repository Variables Ayarlayın:**
+    Bitbucket repository'nizde **Repository settings > Pipelines > Repository variables** kısmına gidin ve şu değişkenleri ekleyin:
+    *   `GCP_PROJECT_ID`: Google Cloud Proje ID'niz.
+    *   `GCP_LOCATION`: (Örn: `us-central1`).
+    *   `GCP_CREDENTIALS_JSON`: Google Service Account JSON dosyanızın içeriği.
+    *   `BITBUCKET_USERNAME`: Bitbucket kullanıcı adınız.
+    *   `BITBUCKET_APP_PASSWORD`: Bitbucket'tan alacağınız App Password.
+
+### 2. GitHub Kurulumu
+
+GitHub kullanıyorsanız, aşağıdaki dosyaları projenize kopyalayın:
+
+1.  **Konfigürasyon Dosyaları:**
+    *   `.pr_agent.toml` dosyasını ana dizine kopyalayın.
+    *   `.github/pr_rules/` klasörünü ve içindeki tüm dosyaları, kendi projenizde de aynı yola (`.github/pr_rules/`) olacak şekilde kopyalayın.
+    *   `.github/workflows/ai_review.yml` dosyasını, `.github/workflows/` klasörüne kopyalayın.
+
+2.  **Secrets Ayarlayın:**
+    Repository'nizde **Settings > Secrets and variables > Actions** kısmına gidin:
+    *   `GCP_PROJECT_ID`: Google Cloud Proje ID'niz.
+    *   `GCP_SA_KEY`: Google Service Account JSON dosyanızın içeriği.
+
+<p align="right">(<a href="#readme-top">yukarı çık</a>)</p>
 
 ---
 
