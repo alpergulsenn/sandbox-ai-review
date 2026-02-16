@@ -1,6 +1,5 @@
 # 🛡️ Abralabs - Java ARCHITECTURAL STANDARDS
 
-**IMPORTANT**: For all issues, use the exact `[TAG]` format in the `issue_header` as specified in each rule (e.g., `[SECURITY]`, `[CRITICAL-ERROR]`).
 
 ## 🔑 RULE INDEX (ALL RULES ARE ENFORCED)
 
