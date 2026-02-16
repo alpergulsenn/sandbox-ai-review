@@ -1,4 +1,4 @@
-name: AI Code Review
+name: PR Agent Workflow
 
 on:
   pull_request:
@@ -15,11 +15,20 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      # Kaynak kodu ve .pr_agent.toml'u içeri al
+      # Kaynak kodu içeri al
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Prepare Rules
+        uses: ./.github/actions/prepare-rules
+
+        # 3. ADIM: DEBUG (Kuralların yüklenip yüklenmediğini kontrol et)
+      - name: Debug Environment Variables
+        run: |
+          echo "Checking injected variables..."
+          echo "PR_REVIEWER__EXTRA_INSTRUCTIONS: $PR_REVIEWER__EXTRA_INSTRUCTIONS"
 
       # Botu çalıştır ---
       - name: Create Credentials File
@@ -35,50 +44,15 @@ jobs:
           VERTEX_AI_LOCATION: "us-central1"
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
-          # --- MODEL CONFIG (HIBRİT YAPI) --- (vertex_ai/ ön eki botun OpenAI'a gitmesini engeller)
-          CONFIG.MODEL: "vertex_ai/gemini-2.0-flash" # Derin analiz için
-          CONFIG.MODEL_TURBO: "vertex_ai/gemini-2.0-flash" # Etiketleme ve özet için
-          CONFIG.FALLBACK_MODELS: "[]"
-          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "50000" # Daha büyük PR'lar için token limitini artırıldı.
-          CONFIG.PUBLISH_OUTPUT: "true" # Loglarda Token usage.
-
-          # --- FILTERING (GÜRÜLTÜ ENGELLEME) ---
-          # İstenmeyen dosyaları görmezden gel
-          CONFIG.IGNORE_FILE_EXTENSIONS: "['.json', '.md', '.css', '.lock', '.svg']"
-
           # --- GITHUB ACTION AUTO SETTINGS ---
-          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "true"
+          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
-          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "true"
+          GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
+          CONFIG__VERBOSITY_LEVEL: "2"
+          GLOBAL__LOG_LEVEL: "INFO"
 
-            # --- PR DESCRIPTION SETTINGS (Custom Labellar Otomatik) ---
-          PR_DESCRIPTION.ENABLE_CUSTOM_LABELS: "true"
-          PR_DESCRIPTION.USE_DESCRIPTION_MARKERS: "false"
-          PR_DESCRIPTION.ADD_ORIGINAL_USER_DESCRIPTION: "true"
-
-          # --- REVIEWER CONFIGURATION ---
-          PR_REVIEWER.NUM_CODE_SUGGESTIONS: "10"
-          PR_REVIEWER.INLINE_CODE_COMMENTS: "true"
-          PR_REVIEWER.PERSISTENT_COMMENT: "true"
-          PR_REVIEWER.MINIMAL_SEVERITY: "Medium"
-          PR_REVIEWER.REQUIRE_SECURITY_REVIEW: "true"
-
-          # Disable these to reduce noise
-          PR_REVIEWER.REQUIRE_SCORE_REVIEW: "false"
-          PR_REVIEWER.REQUIRE_TESTS_REVIEW: "false"
-          PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
-          PR_REVIEWER.REQUIRE_CAN_BE_SPLIT_REVIEW: "false"
-
-          # Labels
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "true"
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_SECURITY: "false"
-          PR_REVIEWER.ENABLE_AUTO_APPROVAL: "false"
-          
-          # --- Code Suggestion Settings ---
-          PR_CODE_SUGGESTION.NUM_CODE_SUGGESTIONS: "5"
-          
-          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-            MANDATORY: Find EXACTLY 8 issues.
-            Current PR has: hardcoded URL, empty catch, var usage, ==, unused var, filter loop, callback hell, unreachable code.
-            Report ALL of them.
-          
+      - name: Customize Title
+        if: always() # Hata olsa bile çalış
+        uses: ./.github/actions/customize-title
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
