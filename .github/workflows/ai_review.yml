@@ -50,7 +50,7 @@ jobs:
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
           CONFIG__VERBOSITY_LEVEL: "2"
           GLOBAL__LOG_LEVEL: "INFO"
-          #CONFIG__MODEL_TEMPERATURE: "0.6"
+          CONFIG__MODEL_TEMPERATURE: "0.1"
           #CONFIG__TOP_P: "0.9" # Nucleus sampling (opsiyonel)
 
       - name: Customize Title
