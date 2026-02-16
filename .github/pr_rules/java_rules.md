@@ -1,5 +1,7 @@
 # 🛡️ Abralabs - Java ARCHITECTURAL STANDARDS
 
+**IMPORTANT**: For all issues, use the exact `[TAG]` format in the `issue_header` as specified in each rule (e.g., `[SECURITY]`, `[CRITICAL-ERROR]`).
+
 ## 🔑 RULE INDEX (ALL RULES ARE ENFORCED)
 
 **CRITICAL SECURITY (MUST CHECK):**
@@ -19,7 +21,7 @@
 **PERFORMANCE & QUALITY:**
 11. N+1 Query Problem (JPA/Hibernate)
 12. Resource Leaks (Streams/Connections) (CRITICAL)
-13. String Concatenation in Loops
+13. String Concatenation in Loops 
 14. Large Object in Session
 15. Inefficient Collection Operations
 16. Dead Code & Unused Imports
@@ -246,7 +248,7 @@ public class LoginController {
   issue_header: "[SECURITY] SQL Injection Risk"
   issue_content: "Raw string concatenation in SQL detected. Use PreparedStatement with '?' placeholders to prevent SQL injection attacks."
   fix_suggestion: "PreparedStatement ps = conn.prepareStatement(\"SELECT * FROM users WHERE username = ? AND password = ?\"); ps.setString(1, username); ps.setString(2, password);"
-
+  
 - relevant_file: "LoginController.java"
   issue_header: "[CRITICAL-ERROR] Resource Leak"
   issue_content: "Connection not properly closed. Use try-with-resources to ensure cleanup even on exceptions."

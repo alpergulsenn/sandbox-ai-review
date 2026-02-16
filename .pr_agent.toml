@@ -9,7 +9,7 @@ enable_custom_labels = true
 temperature = 0.2
 
 [pr_code_suggestions]
-suggestions_score_threshold = 8
+suggestions_score_threshold = 5
 
 # --- BOYUT LABEL'LARI ---
 [custom_labels."size/XS"]
