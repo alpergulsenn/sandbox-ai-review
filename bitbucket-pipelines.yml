@@ -78,6 +78,7 @@ pipelines:
               docker run --rm \
                 -v $(pwd):/workspace \
                 -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG_FILE="/workspace/.pr_agent.toml" \
                 -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
                 -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
                 -e VERTEXAI__LOCATION=$GCP_LOCATION \
@@ -157,6 +158,7 @@ pipelines:
               docker run --rm \
                 -v $(pwd):/workspace \
                 -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG_FILE="/workspace/.pr_agent.toml" \
                 -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
                 -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
                 -e VERTEXAI__LOCATION=$GCP_LOCATION \
@@ -236,6 +238,7 @@ pipelines:
               docker run --rm \
                 -v $(pwd):/workspace \
                 -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG_FILE="/workspace/.pr_agent.toml" \
                 -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
                 -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
                 -e VERTEXAI__LOCATION=$GCP_LOCATION \
