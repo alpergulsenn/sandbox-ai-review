@@ -72,8 +72,8 @@ Bitbucket kullanıyorsanız, aşağıdaki dosyaları projenizin ana dizinine kop
     *   `GCP_PROJECT_ID`: Google Cloud Proje ID'niz.
     *   `GCP_LOCATION`: (Örn: `us-central1`).
     *   `GCP_CREDENTIALS_JSON`: Google Service Account JSON dosyanızın içeriği.
-    *   `BITBUCKET_USERNAME`: Bitbucket kullanıcı adınız.
-    *   `BITBUCKET_APP_PASSWORD`: Bitbucket'tan alacağınız App Password.
+    *   `BITBUCKET_USERNAME`: Bitbucket mail adresiniz.
+    *   `BITBUCKET_APP_PASSWORD`: Bitbucket'tan alacağınız Api Token. [https://id.atlassian.com/manage-profile/security/api-tokens]
 
 ### 2. GitHub Kurulumu
 
