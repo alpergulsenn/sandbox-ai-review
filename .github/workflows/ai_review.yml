@@ -1,16 +1,22 @@
 name: PR Agent Workflow
 
 on:
+  # PR açıldığında, tekrar açıldığında veya güncellendiğinde (yeni commit atıldığında) çalışır.
   pull_request:
     types: [opened, reopened, synchronize]
+  # PR'a yorum yapıldığında çalışır (örneğin /review komutu için).
   issue_comment:
     types: [created]
 
 jobs:
   pr_agent_job:
+    # Bu koşul, gereksiz çalışmaların önüne geçer.
+    # 1. Ya bir PR olayıdır (açılma, güncellenme vs.)
+    # 2. Ya da bir issue yorumudur, ama bu issue aslında bir PR'dır VE yorum '/' ile başlar (yani bir komuttur).
     if: ${{ github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
+      # Botun PR'lara yorum yapabilmesi ve güncelleyebilmesi için gerekli izinler.
       issues: write
       pull-requests: write
       contents: read
@@ -35,24 +41,39 @@ jobs:
         run: echo '${{ secrets.GCP_SA_KEY }}' > gcp_key.json
 
       - name: PR Agent Action
-        uses: Codium-ai/pr-agent@main # Kaynak koddan build eder. Her seferinde build etmesin diye aşağıdaki kodu kullandık.
+        uses: Codium-ai/pr-agent@main # CodiumAI'nin PR Agent aksiyonunu kullanır.
 
         env:
           # --- GCP VERTEX AI AUTH ---
+          # GitHub Token'ı (otomatik oluşturulur), botun GitHub API ile konuşmasını sağlar.
           GITHUB_TOKEN: ${{ github.token }}
+          # Google Cloud Proje ID'si (Secrets'tan alınır).
           VERTEX_AI_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          # AI Modelinin çalıştığı bölge. Değiştirilirse farklı bir veri merkezi kullanılır (örn: europe-west1).
           VERTEX_AI_LOCATION: "us-central1"
+          # Google Cloud kimlik doğrulama dosyası yolu.
           GOOGLE_APPLICATION_CREDENTIALS: "/github/workspace/gcp_key.json"
 
           # --- GITHUB ACTION AUTO SETTINGS ---
+          # "true" yapılırsa: Bot PR'ın açıklamasını (description) otomatik olarak doldurur/günceller.
+          # "false" yapılırsa: Sadece /describe komutu ile çalışır.
           GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: "false"
+
+          # "true" yapılırsa: Her yeni PR'da veya güncellemede otomatik kod incelemesi (review) yapar.
+          # "false" yapılırsa: Sadece /review komutu ile çalışır.
           GITHUB_ACTION_CONFIG.AUTO_REVIEW: "true"
+
+          # "true" yapılırsa: PR içeriğine göre otomatik etiketler (labels) ekler.
           GITHUB_ACTION_CONFIG.AUTO_GENERATE_LABELS: "false"
+
+          # Log seviyesi ayarları. Hata ayıklama (debug) için kullanılır.
+          # Seviye arttıkça daha fazla detay görünür. (0: Sessiz, 2: Detaylı)
           CONFIG__VERBOSITY_LEVEL: "2"
+          # Global log seviyesi (INFO, DEBUG, WARN, ERROR).
           GLOBAL__LOG_LEVEL: "INFO"
 
       - name: Customize Title
-        if: always() # Hata olsa bile çalış
-        uses: ./.github/actions/customize-title
+        if: always() # Önceki adımlarda hata olsa bile bu adımın çalışmasını sağlar.
+        uses: ./.github/actions/customize-title # Kendi özel aksiyonunuzu çağırır (PR başlığını düzenleme action'ı)
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -21,6 +21,7 @@ runs:
             issue_number: number,
           });
 
+          // Hedef yorumu bul: İçinde 'PR Reviewer Guide' geçen ve Bot tarafından yazılmış yorum.
           const targetComment = comments.data.find(c =>
             c.body.includes('PR Reviewer Guide') &&
             c.user.type === 'Bot'
@@ -31,13 +32,17 @@ runs:
 
             let newBody = targetComment.body;
 
-            //Reviewer Guide başlığını değiştir
+            // --- BAŞLIKLARI ÖZELLEŞTİR ---
+            
+            // "PR Reviewer Guide" başlığını değiştirir.
+            // İkinci parametre ('## 🎩 Review of Abralabs PR Agent') yeni başlıktır. İstediğiniz gibi değiştirebilirsiniz.
             newBody = newBody.replace(
               /## PR Reviewer Guide[^\n]*/g,
               '## 🎩 Review of Abralabs PR Agent'
             );
 
-            //Code Suggestions başlığını değiştir
+            // "PR Code Suggestions" başlığını değiştirir.
+            // İkinci parametre ('## ✨ Suggestions of Abralabs PR Agent') yeni başlıktır.
             newBody = newBody.replace(
               /## PR Code Suggestions ✨[^\n]*/g,
               '## ✨ Suggestions of Abralabs PR Agent'

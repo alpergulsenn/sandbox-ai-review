@@ -1,17 +1,20 @@
 image: atlassian/default-image:4
 
 pipelines:
+  # PR (Pull Request) tetiklendiğinde çalışacak ana pipeline.
   pull-requests:
-    "**":
+    "**": # Tüm branch'ler için geçerli.
       - step:
           name: 🛡️ Abralabs AI Code Review & Guard
           services:
             - docker
           script:
+            # 1. KURALLARI HAZIRLA
+            # Genel sistem kurallarını (system_override.md) active_rules.md dosyasına yazar.
             - 'echo "### 🛡️ System Override & Output Format" > active_rules.md'
             - 'cat .bitbucket/pr_rules/system_override.md >> active_rules.md || echo "Warning: system_override.md not found"'
 
-            # C# Rules
+            # C# Kuralları: Eğer .cs dosyalarında değişiklik varsa, C# kurallarını ekler.
             - |
               if git diff --name-only origin/master...$BITBUCKET_BRANCH | grep -q "\.cs$"; then
                 echo -e "\n\n" >> active_rules.md
@@ -73,28 +76,31 @@ pipelines:
                  EXTRA_ARGS="\"$PR_AGENT_QUESTION\""
               fi
 
-            # Docker Run
+            # Docker Run: PR Agent Container'ını başlatır ve analizi yapar.
             - |
               docker run --rm \
                 -v $(pwd):/workspace \
-                -e CONFIG__VERBOSITY_LEVEL=2 \
+                -e CONFIG__VERBOSITY_LEVEL=2 \ # Log detay seviyesi (2: Detaylı)
                 -e CONFIG_FILE="/workspace/.pr_agent.toml" \
-                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \
-                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \
-                -e VERTEXAI__LOCATION=$GCP_LOCATION \
+                -e CONFIG__MODEL="vertex_ai/gemini-2.0-flash" \ # Kullanılan AI Modeli (Google Gemini)
+                -e VERTEXAI__PROJECT=$GCP_PROJECT_ID \ # GCP Proje ID (Environment Variable'dan gelir)
+                -e VERTEXAI__LOCATION=$GCP_LOCATION \ # GCP Bölgesi
                 -e GOOGLE_APPLICATION_CREDENTIALS="/workspace/gcp_keys.json" \
                 -e BITBUCKET__AUTH_TYPE="basic" \
                 -e BITBUCKET__BASIC_TOKEN=$ENCODED_TOKEN \
                 -e CONFIG__GIT_PROVIDER="bitbucket" \
-                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
-                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
-                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \
-                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \
+                -e PR_REVIEWER__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \ # Hazırlanan kuralları Reviewer botuna ilet
+                -e PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \ # Hazırlanan kuralları Suggestion botuna ilet
+                -e PR_DESCRIPTION__EXTRA_INSTRUCTIONS="$RULES_CONTENT" \ # Hazırlanan kuralları Description botuna ilet
+                -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS="true" \ # Kod önerilerini commit edilebilir yap
                 codiumai/pr-agent:latest \
                 --pr_url="$PR_URL" \
                 $PR_AGENT_COMMAND $EXTRA_ARGS
 
+  # Manuel olarak tetiklenebilen özel pipeline'lar.
+  # Bitbucket arayüzünden "Run pipeline" diyerek çalıştırılabilir.
   custom:
+    # Kod iyileştirme önerileri almak için kullanılır (/improve).
     pr-agent-improve:
       - variables:
           - name: PR_ID

@@ -1,21 +1,34 @@
 [config]
+# Kullanılan ana yapay zeka modeli. Google Vertex AI üzerindeki Gemini 2.0 Flash modelini kullanıyoruz.
 model = "vertex_ai/gemini-2.0-flash"
+# Daha hızlı yanıt gereken durumlar için turbo modeli (yine aynı model seçili).
 model_turbo = "vertex_ai/gemini-2.0-flash"
+# Eğer ana model çalışmazsa denenecek yedek modeller.
 fallback_models = []
+# Modelin işleyebileceği maksimum token sayısı (kelime/karakter sınırı).
 custom_model_max_tokens = 50000
+# Analiz edilmeyecek dosya uzantıları. Bu dosyalar AI'a gönderilmez.
 ignore_file_extensions = [".json", ".md", ".css", ".lock", ".svg"]
+# Sonuçların PR'a yorum olarak yazılıp yazılmayacağı.
 publish_output = true
+# Özel etiketlerin (aşağıdaki custom_labels) kullanılıp kullanılmayacağı.
 enable_custom_labels = true
+# Modelin yaratıcılık seviyesi (0.0 - 1.0). 0.2 daha tutarlı ve kesin yanıtlar verir.
 temperature = 0.2
 
 [pr_code_suggestions]
+# Önerilerin kalite eşiği. Bu puanın altındaki öneriler gösterilmez.
 suggestions_score_threshold = 5
 
 [pr_questions]
+# /ask komutu kullanıldığında yardım metninin gösterilip gösterilmeyeceği.
 enable_help_text = true
+# Soru cevaplarken önceki konuşmaların (context) hatırlanması.
 use_conversation_history = true
 
 [pr_questions_prompt]
+# /ask komutu için sistem istemi (System Prompt).
+# Botun nasıl davranacağını ve hangi kurallara uyacağını belirler.
 system = """You are PR-Reviewer, a language model designed to answer questions about a Git Pull Request (PR).
 
 Your goal is to answer questions\\tasks about the new code introduced in the PR (lines starting with '+' in the 'PR Git Diff' section), and provide feedback.
@@ -38,6 +51,7 @@ IMPORTANT RULES (MUST FOLLOW):
 """
 
 # --- BOYUT LABEL'LARI ---
+# PR boyutuna göre otomatik etiketler. Description kısmındaki kurallara göre AI karar verir.
 [custom_labels."size/XS"]
 description = "pr_agent: PR has very minimal changes, fewer than 50 lines changed in total"
 
@@ -54,6 +68,7 @@ description = "pr_agent: PR has large changes, between 300 and 700 lines changed
 description = "pr_agent: PR has very large changes, more than 700 lines changed"
 
 # --- TÜR LABEL'LARI ---
+# PR içeriğine göre otomatik etiketler. AI, kod değişikliklerini analiz edip uygun olanı seçer.
 [custom_labels."Bug-fix"]
 description = "pr_agent: PR contains bug fixes or resolves issues. Look for keywords like 'fix', 'bug', 'resolve', 'issue' in the PR description or commit messages"
 
@@ -85,6 +100,7 @@ description = "pr_agent: PR modifies API endpoints, request/response structures,
 description = "pr_agent: PR updates dependencies, packages, or external libraries"
 
 # --- ÖNCELIK LABEL'LARI ---
+# Kritik durumlar için etiketler.
 [custom_labels."critical"]
 description = "pr_agent: PR fixes critical bugs, security vulnerabilities, or production issues that need immediate attention"
 

@@ -17,6 +17,8 @@ runs:
       id: changes
       uses: tj-actions/changed-files@v44
       with:
+        # Hangi dosya türlerinin hangi kuralları tetikleyeceğini burada tanımlıyoruz.
+        # Yeni bir dil eklemek isterseniz buraya yeni bir blok ekleyebilirsiniz (örneğin python: - '**/*.py').
         files_yaml: |
           java:
             - '**/*.java'
@@ -45,20 +47,24 @@ runs:
         echo "" >> active_rules.md
 
         # System Override & Output Format
+        # Tüm diller için geçerli olan genel kuralları burada ekliyoruz.
         cat .github/pr_rules/system_override.md >> active_rules.md
         echo "" >> active_rules.md
 
+        # Eğer C# dosyalarında değişiklik varsa, C# kurallarını ekle.
         if [[ "${{ steps.changes.outputs.csharp_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/csharp_rules.md >> active_rules.md
         fi
 
+        # Eğer Java dosyalarında değişiklik varsa, Java kurallarını ekle.
         if [[ "${{ steps.changes.outputs.java_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/java_rules.md >> active_rules.md
         fi
 
         # JS Logic
+        # Eğer JavaScript/TypeScript dosyalarında değişiklik varsa, JS kurallarını ekle.
         if [[ "${{ steps.changes.outputs.js_any_changed }}" == "true" ]]; then
           echo -e "\n\n" >> active_rules.md
           cat .github/pr_rules/js_rules.md >> active_rules.md
@@ -72,7 +78,8 @@ runs:
 
         DELIMITER="RULE_BLOCK_$(date +%s)"
 
-        # PR_REVIEWER için kuralları env'e yaz
+        # PR_REVIEWER (İnceleme yapan bot) için kuralları environment değişkenine yaz.
+        # Bu değişken sayesinde bot, yukarıda hazırladığımız kuralları okuyabilir.
         echo "PR_REVIEWER__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
         cat active_rules.md >> $GITHUB_ENV
         echo "" >> $GITHUB_ENV 
@@ -80,7 +87,7 @@ runs:
         echo "DEBUG: PR_REVIEWER__EXTRA_INSTRUCTIONS content:"
         cat active_rules.md
 
-        # PR_CODE_SUGGESTIONS için kuralları env'e yaz
+        # PR_CODE_SUGGESTIONS (Kod önerisi yapan bot) için de aynı kuralları tanımla.
         echo "PR_CODE_SUGGESTIONS__EXTRA_INSTRUCTIONS<<$DELIMITER" >> $GITHUB_ENV
         cat active_rules.md >> $GITHUB_ENV
         echo "" >> $GITHUB_ENV 
