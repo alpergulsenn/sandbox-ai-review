@@ -44,7 +44,7 @@ runs:
             // "PR Code Suggestions" başlığını değiştirir.
             // İkinci parametre ('## ✨ Suggestions of Abralabs PR Agent') yeni başlıktır.
             newBody = newBody.replace(
-              /## PR Code Suggestions ✨[^\n]*/g,
+              /## PR Code Suggestions[^\n]*/g,
               '## ✨ Suggestions of Abralabs PR Agent'
             );
 
