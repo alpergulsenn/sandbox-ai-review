@@ -122,6 +122,19 @@ As requested by the engineering lead, the agent operates on a **"Contextual Reas
 
 ---
 
+### 🔧 Addressing False Positives: The Noise Filtering Protocol
+
+Initial reviews sometimes suffered from "false positives"—suggestions that were stylistic or minor, rather than critical. To combat this, a new **Noise Filtering Protocol** was implemented based on the `system_override.md` rules. This protocol ensures the AI focuses exclusively on:
+
+1.  **Critical Impact:** Issues that could break production, leak data, or significantly degrade performance.
+2.  **No Nitpicking:** Ignores subjective style, naming, or minor formatting issues.
+3.  **100% Certainty:** Only reports bugs when absolutely confident, avoiding assumptions about external context.
+4.  **No Lecturing:** Avoids teaching basic concepts unless a critical error is made.
+
+This strategic filtering significantly improved the signal-to-noise ratio, making AI reviews more actionable and trusted by developers.
+
+---
+
 ##  Getting Started
 
 Follow these steps to deploy the **sandbox-ai-review** agent in your repository. This setup ensures your code is audited by **Gemini 2.0 Flash** with senior-level precision.
@@ -195,18 +208,21 @@ To demonstrate the "Context Logic" during a review:
 
 ---
 
-## <a id="cost-analysis"></a>  Cost Analysis (January 2026)
+## <a id="cost-analysis"></a>  Cost Analysis (Token-Based)
 
-Based on real-world monitoring, the Gemini 2.0 Flash implementation provides industry-leading efficiency:
+Based on real-world monitoring, the Gemini 2.0 Flash implementation provides industry-leading efficiency. Costs are optimized through the noise filtering protocol defined in `system_override.md` and the `ignore_file_extensions` in `.pr_agent.toml`.
 
-| Metric | Value (Turkish Lira - TL) |
+For an example 400-line code change, the token usage and estimated cost are as follows:
+
+| Metric | Value |
 | --- | --- |
-| **Avg. Cost per PR** | **~0.11 TL** (0,0023 $) |
-| **Daily Peak (Jan 27)** | 1.6 TL -> 0,036$ (for 12 PRs)  |
-| **Input Cost** | Higher due to context-heavy diff reading |
-| **Output Cost** | Lower due to strict `Medium` severity filtering |
+| **Prompt Tokens** | 9783 |
+| **Completion Tokens** | 10 |
+| **Total Tokens** | 9793 |
+| **Avg. Cost per PR** | **~0.11 TL** (0,005 $)* |
+| **Estimated Cost for 1M Tokens** | ($0.50 USD)* |
 
-*Note: Costs are optimized by excluding non-code files like `.json`, `.css`, and `.svg`.*
+*Note: Average PR cost is based on historical data and general model usage. Actual costs may vary depending on PR size and feedback outputs. Costs are optimized by excluding non-code files like `.json`, `.css`, and `.svg`.*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -238,7 +254,7 @@ You can force the agent to evaluate code against specific industry standards or 
 
 ## Contact
 
-**Alper** - Computer Engineering Intern at Abralabs  : [LinkedIn](https://www.linkedin.com/in/alpergulsenn/)
+**Alper** : [LinkedIn](https://www.linkedin.com/in/alpergulsenn/)
 
 ---
 
