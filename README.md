@@ -152,18 +152,38 @@ Before installation, ensure you have the following:
 
 ###  Installation
 
-1. **Configure GitHub Secrets**
-Navigate to **Settings > Secrets and variables > Actions** and add:
-* `GCP_SA_KEY`: The full content of your Service Account JSON key.
-* `GCP_PROJECT_ID`: Your unique Google Cloud Project ID.
+This repository contains all the ready-made configurations required to integrate the **AI Code Review** system into your project. To install, simply copy the relevant files from this repository to your project.
 
+#### 1. Bitbucket Setup
 
-2. **Add the Workflow**
-Create `.github/workflows/ai_review.yml` and paste the provided workflow configuration. This triggers the agent on `pull_request` events.
-3. **Define Custom Labels**
-Add `.pr_agent.toml` to your root directory. This file defines the logic for categories like `security-review`, `performance`, and `Bug-fix`.
-4. **Set Token Limits**
-Ensure `CONFIG.CUSTOM_MODEL_MAX_TOKENS` is set to **8192** in your YAML to allow the agent to process complex files without truncation.
+If you are using Bitbucket, copy the following files to your project's root directory:
+
+1.  **Configuration Files:**
+    *   Copy the `.pr_agent.toml` file to the root directory.
+    *   Copy the `.bitbucket/pr_rules/` folder and all its contents to the same path (`.bitbucket/pr_rules/`) in your project.
+    *   Copy the `bitbucket-pipelines.yml` file to the root directory.
+
+2.  **Set Repository Variables:**
+    In your Bitbucket repository, go to **Repository settings > Pipelines > Repository variables** and add the following variables:
+    *   `GCP_PROJECT_ID`: Your Google Cloud Project ID.
+    *   `GCP_LOCATION`: (e.g., `us-central1`).
+    *   `GCP_CREDENTIALS_JSON`: The content of your Google Service Account JSON file.
+    *   `BITBUCKET_USERNAME`: Your Bitbucket email address.
+    *   `BITBUCKET_APP_PASSWORD`: API Token you will get from Bitbucket. [https://id.atlassian.com/manage-profile/security/api-tokens]
+
+#### 2. GitHub Setup
+
+If you are using GitHub, copy the following files to your project:
+
+1.  **Configuration Files:**
+    *   Copy the `.pr_agent.toml` file to the root directory.
+    *   Copy the `.github/pr_rules/` folder and all its contents to the same path (`.github/pr_rules/`) in your project.
+    *   Copy the `.github/workflows/ai_review.yml` file to the `.github/workflows/` folder.
+
+2.  **Set Secrets:**
+    In your repository, go to **Settings > Secrets and variables > Actions** and add:
+    *   `GCP_PROJECT_ID`: Your Google Cloud Project ID.
+    *   `GCP_SA_KEY`: The full content of your Google Service Account JSON key.
 
 ---
 
